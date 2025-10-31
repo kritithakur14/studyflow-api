@@ -30,11 +30,12 @@ It allows users to create **decks**, add **flashcards** for quick revision, and 
    git clone https://github.com/kritithakur14/studyflow-api.git
 
 2. Install dependencies:
-   bash
+   ```bash
    npm install
+   
 
 3. Create a .env file in the root directory and add:
-   bash
+   ```bash
    PORT = 8000
 
    MONGODB_URL = your_mongodb_connection_string
@@ -42,7 +43,7 @@ It allows users to create **decks**, add **flashcards** for quick revision, and 
    JWT_SECRET = your_secret_key
 
 4. Start the server
-   bash
+   ```bash```
    npm start
   
 
