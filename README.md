@@ -45,12 +45,15 @@ It allows users to create **decks**, add **flashcards** for quick revision, and 
   ```bash
    npm start
 
+---
 
 ## Future Enhancements
 
 - Add pagination and search
 - CI/CD pipeline integration(for automated deployment)
 - Frontend dashboard for StudyFlow
+
+---
 
 ## Author
 
