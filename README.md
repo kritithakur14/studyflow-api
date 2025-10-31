@@ -43,8 +43,9 @@ It allows users to create **decks**, add **flashcards** for quick revision, and 
    JWT_SECRET = your_secret_key
 
 4. Start the server
-   ```bash```
+   ```bash
    npm start
+   ```
   
 
 ---
