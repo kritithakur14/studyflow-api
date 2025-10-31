@@ -13,4 +13,3 @@ const genToken =  (userId) => {
 export default genToken;
 
 
-//priya - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTA0MmM5NTEwYjc3YzViNjVmZTAwNDgiLCJpYXQiOjE3NjE4ODI2MjksImV4cCI6MTc2MjQ4NzQyOX0.yARwQ_ymIg89-7w4vF0r6WcH0pBsjE5joMU4Y307qoM 
