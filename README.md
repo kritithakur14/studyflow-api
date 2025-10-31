@@ -31,19 +31,19 @@ It allows users to create **decks**, add **flashcards** for quick revision, and 
 
 2. Install dependencies:
    ```bash
-  npm install
+   npm install
 
 3. Create a .env file in the root directory and add:
    ```bash
-  PORT = 8000
+   PORT = 8000
 
-  MONGODB_URL = your_mongodb_connection_string
+   MONGODB_URL = your_mongodb_connection_string
 
-  JWT_SECRET = your_secret_key
+   JWT_SECRET = your_secret_key
 
 4. Start the server
   ```bash
-  npm start
+   npm start
 
 
 ## Future Enhancements
