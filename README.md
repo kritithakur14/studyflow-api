@@ -44,7 +44,7 @@ It allows users to create **decks**, add **flashcards** for quick revision, and 
 
 4. Start the server
    ```bash
-   npm start
+   npm run dev
    ```
   
 
