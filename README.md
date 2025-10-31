@@ -45,22 +45,12 @@ It allows users to create **decks**, add **flashcards** for quick revision, and 
   ```bash
   npm start
 
-## Folder Structure
-
-StudyFlow-API/
-│
-├── controllers/      # All controller logic
-├── models/           # Mongoose models (User, Deck, Flashcard, Notes)
-├── routes/           # Express routes
-├── middleware/       # Auth middleware
-├── config/           # DB connection setup
-└── server.js         # Entry point
 
 ## Future Enhancements
 
-o Add pagination and search
-o CI/CD pipeline integration(for automated deployment)
-o Frontend dashboard for StudyFlow
+- Add pagination and search
+- CI/CD pipeline integration(for automated deployment)
+- Frontend dashboard for StudyFlow
 
 ## Author
 
