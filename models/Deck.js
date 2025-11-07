@@ -15,6 +15,23 @@ const deckSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    isPublic: {
+      type: Boolean,
+      default: false,
+    },
+    collaborators: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        role: {
+          type: String,
+          enum: ["viewer", "editor"],
+          default: "viewer",
+        },
+      },
+    ],
     createdAt: {
       type: Date,
       default: Date.now,

@@ -1,5 +1,6 @@
 import express from "express";
 import isAuth from "../middleware/isAuth.js";
+import { canViewDeck, canEditDeck } from "../middleware/deckPermissions.js";
 import {
   createDeck,
   getAllDecks,
@@ -12,8 +13,8 @@ const deckRouter = express.Router();
 
 deckRouter.post("/", isAuth, createDeck);
 deckRouter.get("/", isAuth, getAllDecks);
-deckRouter.get("/:id", isAuth, getDeckById);
-deckRouter.put("/:id", isAuth, updateDeck);
-deckRouter.delete("/:id", isAuth, deleteDeck);
+deckRouter.get("/:id", isAuth, canViewDeck, getDeckById);
+deckRouter.put("/:id", isAuth, canEditDeck, updateDeck);
+deckRouter.delete("/:id", isAuth, canEditDeck, deleteDeck);
 
 export default deckRouter;
