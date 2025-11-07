@@ -122,3 +122,73 @@ export const deleteDeck = async (req, res) => {
     res.status(500).json({ message: `deleteDeck: ${error.message}` });
   }
 };
+
+//add collaborator to deck
+export const addCollaborator = async (req, res) => {
+  try {
+    const { userId, role } = req.body;
+    const deckId = req.params.id;
+
+    const deck = await Deck.findById(deckId);
+    if (!deck) {
+      return res.status(404).json({ message: "Deck not found" });
+    }
+
+    //check if the user is the owner
+    if (deck.user.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Only the owner can add collaborators" });
+    }
+    //check if the user is already a collaborator
+    const existingCollaborator = deck.collaborators.find(
+      (collab) => collab.user.toString() === userId
+    );
+    if (existingCollaborator) {
+      return res
+        .status(400)
+        .json({ message: "Collaborator added successfully" });
+    }
+    deck.collaborators.push({ user: userId, role });
+    await deck.save();
+
+    res.status(200).json({ message: "Collaborator added successfully" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `addCollaborator: ${error.message}` });
+  }
+};
+
+export const removeCollaborator = async (req, res) => {
+  try {
+    const deckId = req.params.id;
+    const userIdToRemove = req.params.userId;
+
+    const deck = await Deck.findById(deckId);
+    if (!deck) {
+      return res.status(404).json({ message: "Deck not found" });
+    }
+
+    //check if the user is the owner
+    if (deck.user.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Only the owner can remove collaborators" });
+    }
+
+    //remove collaborator
+    deck.collaborators = deck.collaborators.filter(
+      (collab) => collab.user.toString() !== userIdToRemove
+    );
+
+    await deck.save();
+    return res
+      .status(200)
+      .json({ message: "Collaborator removed successfully" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `removeCollaborator: ${error.message}` });
+  }
+};

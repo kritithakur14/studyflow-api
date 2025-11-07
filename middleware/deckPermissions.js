@@ -1,4 +1,3 @@
-import { is } from "express/lib/request";
 import Deck from "../models/Deck.js";
 
 export const canViewDeck = async (req, res, next) => {
