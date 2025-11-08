@@ -32,7 +32,7 @@ It allows users to create **decks**, add **flashcards** for quick revision, and 
 
 - **Secure Data Access**
 
-  - Deck visibility and editing is checked through middleware to make sure only.
+  - Deck visibility and editing is checked through middleware to make sure only
     allowed users can access or modify each deck.
 
 ---
