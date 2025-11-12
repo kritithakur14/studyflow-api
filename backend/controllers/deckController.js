@@ -13,7 +13,7 @@ export const createDeck = async (req, res) => {
       title,
       description,
       tags,
-      user: req.userId,
+      user: req.user._id,
     });
     await deck.save();
     res.status(201).json({ message: "Deck created successfully", deck });
@@ -27,7 +27,7 @@ export const createDeck = async (req, res) => {
 export const getAllDecks = async (req, res) => {
   try {
     const { query } = req.query;
-    let filter = { user: req.userId };
+    let filter = { user: req.user._id };
 
     if (query) {
       filter.title = { $regex: query, $options: "i" }; //search by title
@@ -57,18 +57,42 @@ export const getAllDecks = async (req, res) => {
 //get each deck by id
 export const getDeckById = async (req, res) => {
   try {
-    const deck = await Deck.findById(req.params.id);
+    const deck = await Deck.findById(req.params.id)
+      .populate({
+        path: "flashcards",
+        select: "question answer",
+      })
+      .populate({
+        path: "notes",
+        select: "title content",
+      })
+      .populate({
+        path: "collaborators.user",
+        select: "username email",
+      });
 
     if (!deck) {
       return res.status(404).json({ message: "Deck not found" });
     }
 
-    if (deck.user.toString() !== req.userId) {
-      return res
-        .status(403)
-        .json({ message: "Unauthorized access to this deck" });
+    const userId = req.user._id.toString();
+
+    //owner can view
+    if (deck.user.toString() === userId) {
+      return res.status(200).json(deck);
     }
-    res.status(200).json(deck);
+
+    //collaborators can view
+    const isCollaborator = deck.collaborators.some(
+      (collab) => collab.user._id.toString() === userId
+    );
+    if (isCollaborator) {
+      return res.status(200).json(deck);
+    }
+    //else unauthorized
+    return res
+      .status(403)
+      .json({ message: "unauthorized access to this deck" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: `getDeckById: ${error.message}` });
@@ -82,16 +106,28 @@ export const updateDeck = async (req, res) => {
     if (!deck) {
       return res.status(404).json({ message: "Deck not found" });
     }
-    if (deck.user.toString() !== req.userId) {
-      return res
-        .status(403)
-        .json({ message: "Unauthorized access to this deck" });
+    const userId = req.user._id.toString();
+
+    //if user is not the owner
+    if (deck.user.toString() !== userId) {
+      //check if collaborator has edit rights
+      const collaborator = deck.collaborators.find(
+        (collab) => collab.user.toString() === userId
+      );
+      //if not a collaborator or has view-only rights
+      if (!collaborator || collaborator.role !== "editor") {
+        return res
+          .status(403)
+          .json({ message: "You do not have permission to edit this deck" });
+      }
     }
+
+    //allowed to update
     const { title, description, tags } = req.body;
 
-    if (title) deck.title = title;
-    if (description) deck.description = description;
-    if (tags) deck.tags = tags;
+    if (title !== undefined) deck.title = title;
+    if (description !== undefined) deck.description = description;
+    if (tags !== undefined) deck.tags = tags;
 
     const updatedDeck = await deck.save();
     res
@@ -110,7 +146,7 @@ export const deleteDeck = async (req, res) => {
     if (!deck) {
       return res.status(404).json({ message: "Deck not found" });
     }
-    if (deck.user.toString() !== req.userId) {
+    if (deck.user.toString() !== req.user._id.toString()) {
       return res
         .status(403)
         .json({ message: "Unauthorized access to this deck" });
@@ -144,9 +180,13 @@ export const addCollaborator = async (req, res) => {
     const existingCollaborator = deck.collaborators.find(
       (collab) => collab.user.toString() === userId
     );
+
+    //update role if collaborator exists
     if (existingCollaborator) {
+      existingCollaborator.role = role; //update role
+      await deck.save();
       return res
-        .status(400)
+        .status(200)
         .json({ message: "Collaborator added successfully" });
     }
     deck.collaborators.push({ user: userId, role });
