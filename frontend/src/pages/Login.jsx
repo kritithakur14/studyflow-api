@@ -1,9 +1,11 @@
+import React from 'react'
 
-export default function Login() {
+function Login() {
   return (
-    <div >
-      hiinknfksnlfnk
+   <div className='text-30px'>
+      login here!!!
     </div>
   )
 }
 
+export default Login
