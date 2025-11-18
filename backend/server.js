@@ -6,19 +6,26 @@ import userRouter from "./routes/user.js";
 import deckRouter from "./routes/deck.js";
 import flashcardRouter from "./routes/flashcard.js";
 import noteRouter from "./routes/note.js";
+import cors from "cors";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
 const app = express();
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/decks", deckRouter);
 app.use("/api/flashcards", flashcardRouter);
-app.use("/api/notes", noteRouter)
+app.use("/api/notes", noteRouter);
 
 connectDB()
   .then(() => {
