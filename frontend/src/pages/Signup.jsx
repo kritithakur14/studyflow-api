@@ -3,12 +3,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthDataContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import { IoMdEye } from "react-icons/io";
+import { IoMdEyeOff } from "react-icons/io";
 
 function Signup() {
   let navigate = useNavigate();
   let { serverUrl } = useContext(AuthDataContext);
 
-  // let [show, setShow] = useState(false);
+  let [show, setShow] = useState(false);
   let [username, setUsername] = useState("");
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
@@ -89,13 +91,25 @@ function Signup() {
               Password
             </label>
             <input
-              type=" password"
+              type={show ? "text" : "password"}
               id="password"
               className="w-full  h-[40px] border-[2px] border-[#91b6b6] rounded-lg text-[17px] px-[20px] bg-slate-100 focus:outline-none focus:ring-2 focus:ring-[#9ac7d6]"
               required
               onChange={(e) => setPassword(e.target.value)}
               value={password}
             />
+            {!show && (
+              <IoMdEye
+                className="w-[22px] h-[22px] absolute right-3 bottom-[10px] cursor-pointer text-[#08568a]"
+                onClick={() => setShow((prev) => !prev)}
+              />
+            )}
+            {show && (
+              <IoMdEyeOff
+                className="w-[22px] h-[22px] absolute right-3 bottom-[10px] cursor-pointer text-[#08568a]"
+                onClick={() => setShow((prev) => !prev)}
+              />
+            )}
           </div>
 
           <button
