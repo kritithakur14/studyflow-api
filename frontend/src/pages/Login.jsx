@@ -17,14 +17,10 @@ function Login() {
   const handleLogin = async (e) => {
     try {
       e.preventDefault();
-      let result = await axios.post(
-        serverUrl + "/api/auth/login",
-        {
-          email,
-          password,
-        },
-        { withCredentials: true }
-      );
+      let result = await axios.post(serverUrl + "/api/auth/login", {
+        email,
+        password,
+      });
       localStorage.setItem("token", result.data.token);
       localStorage.setItem("user", JSON.stringify(result.data.user));
 
@@ -62,7 +58,7 @@ function Login() {
               Email
             </label>
             <input
-              type="text"
+              type="email"
               id="email"
               className="w-full h-[40px] border-[2px] border-[#91b6b6]   rounded-lg text-[17px] px-[20px] bg-slate-100 focus:outline-none focus:ring-2 focus:ring-[#9ac7d6]"
               required

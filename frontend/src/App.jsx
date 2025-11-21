@@ -4,6 +4,10 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import DeckDetails from "./pages/DeckDetails";
 import { ToastContainer } from "react-toastify";
+import Users from "./pages/Users";
+import Collaboration from "./pages/Collaboration";
+import StudyItems from "./pages/StudyItems";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -15,6 +19,10 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/deck/:id" element={<DeckDetails />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/collaboration" element={<Collaboration />} />
+        <Route path="/study-items" element={<StudyItems />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </>
   );

@@ -19,21 +19,19 @@ function Signup() {
   const handleSignUp = async (e) => {
     try {
       e.preventDefault();
-      let result = await axios.post(
-        serverUrl + "/api/auth/signup",
-        {
-          username,
-          email,
-          password,
-        },
-        { withCredentials: true }
-      );
+      let result = await axios.post(serverUrl + "/api/auth/signup", {
+        username,
+        email,
+        password,
+      });
       navigate("/login");
       toast.success("Account created successfully! Please login.");
       console.log(result.data);
     } catch (error) {
       console.log("Signup error:", error);
-      toast.error("Signup failed. Please try again.");
+      toast.error(
+        error.response?.data?.message || "Signup failed. Please try again."
+      );
     }
     setLoading(false);
   };
@@ -78,7 +76,7 @@ function Signup() {
               Email
             </label>
             <input
-              type="text"
+              type="email"
               id="email"
               className="w-full h-[40px] border-[2px] border-[#91b6b6]   rounded-lg text-[17px] px-[20px] bg-slate-100 focus:outline-none focus:ring-2 focus:ring-[#9ac7d6]"
               required
