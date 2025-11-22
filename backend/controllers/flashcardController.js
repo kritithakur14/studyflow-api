@@ -149,3 +149,12 @@ export const deleteFlashcard = async (req, res) => {
     res.status(500).json({ message: `deleteFlashcard: ${error.message}` });
   }
 };
+
+export const getFlashcardCount = async (req, res) => {
+  try {
+    const count = await Flashcards.countDocuments();
+    res.status(200).json({ totalFlashcards: count });
+  } catch (error) {
+    res.status(500).json({ message: `getFlashcardCount: ${error.message}` });
+  }
+};

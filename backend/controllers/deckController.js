@@ -232,3 +232,14 @@ export const removeCollaborator = async (req, res) => {
       .json({ message: `removeCollaborator: ${error.message}` });
   }
 };
+
+export const getPendingCollaborations = async (req, res) => {
+  try {
+    const decks = await Deck.find({ collaborators: req.userId });
+    res.status(200).json(decks);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: `getPendingCollaborations: ${error.message}` });
+  }
+};

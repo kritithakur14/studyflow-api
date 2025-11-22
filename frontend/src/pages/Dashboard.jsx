@@ -6,14 +6,115 @@ import Navbar from "../components/Navbar";
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalDecks, setTotalDecks] = useState(0);
+  const [totalNotes, setTotalNotes] = useState(0);
+  const [totalFlashcards, setTotalFlashcards] = useState(0);
+  const [pendingCollabs, setPendingCollabs] = useState(0);
 
-  //Check for user
+  //Auth Check for user
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (!user) {
       navigate("/login");
     }
   }, [navigate]);
+
+  //total users
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch("http://192.168.100.12:8000/api/users", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const data = await res.json();
+        setTotalUsers(data.length);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  //total decks
+  useEffect(() => {
+    const fetchDecks = async () => {
+      try {
+        const res = await fetch("http://192.168.100.12:8000/api/decks", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const data = await res.json();
+        setTotalDecks(data.length);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchDecks();
+  }, []);
+
+  // total notes
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const res = await fetch("http://192.168.100.12:8000/api/notes", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        const data = await res.json();
+        setTotalNotes(data.length);
+      } catch (err) {
+        console.log("Notes fetch error:", err);
+      }
+    };
+    fetchNotes();
+  }, []);
+
+  // total flashcards
+  useEffect(() => {
+    const fetchFlashcards = async () => {
+      try {
+        const res = await fetch(
+          "http://192.168.100.12:8000/api/flashcards/count/all",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const data = await res.json();
+        setTotalFlashcards(data.totalFlashcards || 0);
+      } catch (err) {
+        console.log("Flashcards count error:", err);
+      }
+    };
+    fetchFlashcards();
+  }, []);
+
+  //pendind collabs
+  useEffect(() => {
+    const fetchPending = async () => {
+      try {
+        const res = await fetch(
+          "http://192.168.100.12:8000/api/decks/pending/all",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        const data = await res.json();
+        setPendingCollabs(data.length);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchPending();
+  }, []);
 
   //Read user
   const user = JSON.parse(localStorage.getItem("user"));
@@ -49,7 +150,9 @@ export default function Dashboard() {
               <h3 className="text-lg font-semibold text-[#022a66]">
                 Total Users
               </h3>
-              <p className="text-3xl font-bold text-[#6a1b9a] mt-2">0</p>
+              <p className="text-3xl font-bold text-[#6a1b9a] mt-2">
+                {totalUsers}
+              </p>
             </div>
 
             {/* STUDY ITEMS CARD */}
@@ -57,7 +160,9 @@ export default function Dashboard() {
               <h3 className="text-lg font-semibold text-[#022a66]">
                 Study Items
               </h3>
-              <p className="text-3xl font-bold text-[#6a1b9a] mt-2">0</p>
+              <p className="text-3xl font-bold text-[#6a1b9a] mt-2">
+                {(totalDecks || 0) + (totalNotes || 0) + (totalFlashcards || 0)}
+              </p>
             </div>
 
             {/* COLLABORATION CARD */}
@@ -65,7 +170,9 @@ export default function Dashboard() {
               <h3 className="text-lg font-semibold text-[#022a66]">
                 Pending Collaborations
               </h3>
-              <p className="text-3xl font-bold text-[#6a1b9a] mt-2">0</p>
+              <p className="text-3xl font-bold text-[#6a1b9a] mt-2">
+                {pendingCollabs}
+              </p>
             </div>
           </div>
           {/* RECENT ACTIVITY */}

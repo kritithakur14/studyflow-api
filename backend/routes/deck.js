@@ -3,6 +3,7 @@ import isAuth from "../middleware/isAuth.js";
 import { canViewDeck, canEditDeck } from "../middleware/deckPermissions.js";
 import {
   addCollaborator,
+  getPendingCollaborations,
   removeCollaborator,
 } from "../controllers/deckController.js";
 import {
@@ -20,6 +21,7 @@ deckRouter.get("/", isAuth, getAllDecks);
 deckRouter.get("/:id", isAuth, canViewDeck, getDeckById);
 deckRouter.put("/:id", isAuth, canEditDeck, updateDeck);
 deckRouter.delete("/:id", isAuth, canEditDeck, deleteDeck);
+deckRouter.get("/pending/all", isAuth, getPendingCollaborations);
 
 //add collaborator to deck
 deckRouter.post("/:id/collaborators", isAuth, canEditDeck, addCollaborator);

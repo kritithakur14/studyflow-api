@@ -15,10 +15,12 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    credentials: true,
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
@@ -29,7 +31,7 @@ app.use("/api/notes", noteRouter);
 
 connectDB()
   .then(() => {
-    app.listen(PORT, () => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
   })
