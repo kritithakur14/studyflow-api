@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
+
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
@@ -133,7 +134,8 @@ export default function Dashboard() {
       />
 
       <div className="flex-1 flex flex-col">
-        <Navbar username={user?.username} setIsSidebarOpen={setIsSidebarOpen} />
+        <Navbar username={user?.username} setIsSidebarOpen={setIsSidebarOpen} 
+        title="Dashboard Overview"/>
 
         {isSidebarOpen && (
           <div

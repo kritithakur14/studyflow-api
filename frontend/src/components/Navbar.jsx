@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Navbar({ username, setIsSidebarOpen }) {
+export default function Navbar({ username, setIsSidebarOpen, title }) {
   return (
     <div className="w-full bg-white border-b px-4 py-3 flex items-center justify-between lg:justify-between">
       <button
@@ -14,13 +14,13 @@ export default function Navbar({ username, setIsSidebarOpen }) {
       <div className="flex flex-col items-center text-center w-full lg:w-auto">
          {/* DESKTOP TITLE */}
         <h1 className="hidden lg:block text-2xl font-bold text-[#6a1b9a]">
-          Dashboard Overview
+          {title}
         </h1>
 
         {/* MOBILE TITLE */}
         <div className="lg:hidden flex flex-col">
-          <h1 className="text-lg font-bold text-[#6a1b9a]">Dashboard</h1>
-          <span className="text-sm font-semibold text-[#6a1b9a]">Overview</span>
+          <h1 className="text-lg font-bold text-[#6a1b9a]">{title}</h1>
+          
         </div>
       </div>
 
