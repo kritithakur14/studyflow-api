@@ -4,11 +4,12 @@ import Deck from "../models/Deck.js";
 //create a new note
 export const createNote = async (req, res) => {
   try {
-    const { title, content, deckId } = req.body;
-    if (!title || !content) {
+    const { title, content } = req.body;
+    const { deckId } = req.params;
+    if (!title || !content || !deckId) {
       return res
         .status(400)
-        .json({ message: "Title, Content and UserId are required" });
+        .json({ message: "Title, Content and decId are required" });
     }
     const note = new Notes({
       title,

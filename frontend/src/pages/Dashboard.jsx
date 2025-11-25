@@ -39,7 +39,23 @@ export default function Dashboard() {
     fetchUsers();
   }, []);
 
- 
+  //total decks
+  useEffect(() => {
+    const fetchDecks = async () => {
+      try {
+        const res = await fetch("http://localhost:8000/api/decks", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const data = await res.json();
+        setTotalDecks(data.length);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchDecks();
+  }, []);
 
   // total notes
   useEffect(() => {
@@ -78,23 +94,7 @@ export default function Dashboard() {
     fetchFlashcards();
   }, []);
 
-   //total decks
-  useEffect(() => {
-    const fetchDecks = async () => {
-      try {
-        const res = await fetch("http://localhost:8000/api/decks", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const data = await res.json();
-        setTotalDecks(data.length);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchDecks();
-  }, []);
+  
 
   //pendind collabs
   useEffect(() => {

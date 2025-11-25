@@ -10,7 +10,7 @@ import {
 } from "../controllers/notesController.js";
 
 const noteRouter = express.Router();
-noteRouter.post("/", isAuth, createNote);
+noteRouter.post("/:deckId", isAuth, createNote);
 noteRouter.get("/", isAuth, getAllNotes);
 noteRouter.get("/:id", isAuth, getNoteById);
 noteRouter.put("/:id", isAuth, updateNote);

@@ -31,6 +31,8 @@ export default function Users() {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log("User from localStorage:", user);
+
 
         if (!res.ok) {
           console.log("Fetch users error:".res.status);
@@ -74,7 +76,7 @@ export default function Users() {
           <input
             type="text"
             placeholder="search users..."
-            className="w-full md:w-1/3 px-3 py-2 border rounded-lg mb-4 outline-none text-white"
+            className="w-full md:w-1/3 px-3 py-2 border rounded-lg mb-4 outline-none text-gray-700"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />

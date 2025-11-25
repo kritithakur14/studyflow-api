@@ -1,4 +1,5 @@
 import Deck from "../models/Deck.js";
+import Flashcard from "../models/Flashcard.js";
 
 export const canViewDeck = async (req, res, next) => {
   try {
@@ -33,27 +34,36 @@ export const canViewDeck = async (req, res, next) => {
 
 export const canEditDeck = async (req, res, next) => {
   try {
-    const deckId = req.params.id || req.params.deckId;
-    const deck = await Deck.findById(deckId);
+    let deckId;
 
+    // If URL contains /flashcard/ → this is a flashcard update/delete
+    if (req.url.includes("/flashcard/")) {
+      const flashcardId = req.params.id;
+
+      const flashcard = await Flashcard.findById(flashcardId);
+      if (!flashcard) {
+        return res.status(404).json({ message: "Flashcard not found" });
+      }
+
+      deckId = flashcard.deck; // get correct deck id
+    } else {
+      // Normal deck update/delete
+      deckId = req.params.id || req.params.deckId;
+    }
+
+    const deck = await Deck.findById(deckId);
     if (!deck) {
       return res.status(404).json({ message: "Deck not found" });
     }
-    if (deck.user.toString() === req.user._id.toString()) {
-      return next();
-    }
-    const isCollaborator = deck.collaborators.find(
-      (collab) => collab.user.toString() === req.user._id.toString()
-    );
 
-    if (isCollaborator && isCollaborator.role === "editor") {
-      return next();
+    if (deck.user.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Not permitted to edit this deck" });
     }
 
-    return res
-      .status(403)
-      .json({ message: "You do not have permission to edit this deck" });
+    next();
   } catch (error) {
-    return res.status(500).json({ message: `canEditDeck: ${error.message}` });
+    res.status(500).json({ message: `canEditDeck: ${error.message}` });
   }
 };

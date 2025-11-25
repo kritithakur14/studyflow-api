@@ -7,17 +7,17 @@ export const createFlashcard = async (req, res) => {
     const { question, answer } = req.body;
     const { deckId } = req.params;
 
-    if (!question || !answer || !deckId) {
+    if (!question || !answer) {
       return res
         .status(400)
-        .json({ message: "Question, Answer and DeckId are required" });
+        .json({ message: "Question, Answer are required" });
     }
     //find deck
     const deck = await Deck.findById(deckId);
     if (!deck) {
       return res.status(404).json({ message: "Deck not found" });
     }
-    if (deck.user.toString() !== req.userId) {
+    if (deck.user.toString() !== req.userId.toString()) {
       return res
         .status(403)
         .json({ message: "Unauthorized to access this deck" });
@@ -30,9 +30,9 @@ export const createFlashcard = async (req, res) => {
     });
     await newFlashcard.save();
 
-    //adding flashcard to deck's flashcards array
-    deck.flashcards.push(newFlashcard._id);
-    await deck.save();
+    // //adding flashcard to deck's flashcards array
+    // deck.flashcards.push(newFlashcard._id);
+    // await deck.save();
 
     res.status(201).json({
       message: "Flashcard created successfully",

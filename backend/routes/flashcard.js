@@ -13,13 +13,14 @@ import {
 
 const flashcardRouter = express.Router();
 
-flashcardRouter.post("/:deckId", isAuth, canEditDeck, createFlashcard);
-flashcardRouter.get("/:deckId", isAuth, canViewDeck, getAllFlashcards);
-flashcardRouter.get("/", isAuth, getAllFlashcards);
-flashcardRouter.get("/flashcard/:id", isAuth, getFlashcardsById);
+flashcardRouter.post("/:deckId", isAuth, createFlashcard);
 
-flashcardRouter.get("/count/all", isAuth, getFlashcardCount);
+flashcardRouter.get("/flashcard/:id", isAuth, getFlashcardsById);
 flashcardRouter.put("/flashcard/:id", isAuth, canEditDeck, updateFlashcard);
 flashcardRouter.delete("/flashcard/:id", isAuth, canEditDeck, deleteFlashcard);
+flashcardRouter.get("/count/all", isAuth, getFlashcardCount);
+
+flashcardRouter.get("/", isAuth, getAllFlashcards);
+flashcardRouter.get("/:deckId", isAuth, canViewDeck, getAllFlashcards);
 
 export default flashcardRouter;
