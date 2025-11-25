@@ -235,11 +235,24 @@ export const removeCollaborator = async (req, res) => {
 
 export const getPendingCollaborations = async (req, res) => {
   try {
-    const decks = await Deck.find({ collaborators: req.userId });
-    res.status(200).json(decks);
+    const userId = req.userId; // from isAuth
+
+    const decks = await Deck.find({
+      "collaborators.user": userId, 
+      user: { $ne: userId } // exclude own decks
+    })
+    .populate("user", "username email")
+    .populate("collaborators.user", "username email");
+
+    res.status(200).json({
+      message: "Pending collaborations fetched",
+      count: decks.length,
+      decks
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: `getPendingCollaborations: ${error.message}` });
+    res.status(500).json({
+      message: `getPendingCollaborations: ${error.message}`,
+    });
   }
 };
+

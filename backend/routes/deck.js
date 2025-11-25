@@ -18,10 +18,11 @@ const deckRouter = express.Router();
 
 deckRouter.post("/", isAuth, createDeck);
 deckRouter.get("/", isAuth, getAllDecks);
+deckRouter.get("/pending/all", isAuth, getPendingCollaborations);
+
 deckRouter.get("/:id", isAuth, canViewDeck, getDeckById);
 deckRouter.put("/:id", isAuth, canEditDeck, updateDeck);
 deckRouter.delete("/:id", isAuth, canEditDeck, deleteDeck);
-deckRouter.get("/pending/all", isAuth, getPendingCollaborations);
 
 //add collaborator to deck
 deckRouter.post("/:id/collaborators", isAuth, canEditDeck, addCollaborator);

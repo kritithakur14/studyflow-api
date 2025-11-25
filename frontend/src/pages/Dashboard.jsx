@@ -25,7 +25,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("http://192.168.100.12:8000/api/users", {
+        const res = await fetch("http://localhost:8000/api/users", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -39,29 +39,13 @@ export default function Dashboard() {
     fetchUsers();
   }, []);
 
-  //total decks
-  useEffect(() => {
-    const fetchDecks = async () => {
-      try {
-        const res = await fetch("http://192.168.100.12:8000/api/decks", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const data = await res.json();
-        setTotalDecks(data.length);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchDecks();
-  }, []);
+ 
 
   // total notes
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const res = await fetch("http://192.168.100.12:8000/api/notes", {
+        const res = await fetch("http://localhost:8000/api/notes", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         const data = await res.json();
@@ -78,7 +62,7 @@ export default function Dashboard() {
     const fetchFlashcards = async () => {
       try {
         const res = await fetch(
-          "http://192.168.100.12:8000/api/flashcards/count/all",
+          "http://localhost:8000/api/flashcards/count/all",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -94,12 +78,30 @@ export default function Dashboard() {
     fetchFlashcards();
   }, []);
 
+   //total decks
+  useEffect(() => {
+    const fetchDecks = async () => {
+      try {
+        const res = await fetch("http://localhost:8000/api/decks", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const data = await res.json();
+        setTotalDecks(data.length);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchDecks();
+  }, []);
+
   //pendind collabs
   useEffect(() => {
     const fetchPending = async () => {
       try {
         const res = await fetch(
-          "http://192.168.100.12:8000/api/decks/pending/all",
+          "http://localhost:8000/api/decks/pending/all",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -108,7 +110,8 @@ export default function Dashboard() {
         );
 
         const data = await res.json();
-        setPendingCollabs(data.length);
+        setPendingCollabs(Array.isArray(data) ? data.length : 0);
+
       } catch (err) {
         console.log(err);
       }

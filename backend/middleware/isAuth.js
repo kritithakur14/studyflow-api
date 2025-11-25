@@ -11,7 +11,8 @@ const isAuth = async (req, res, next) => {
     const token = authHeader.split(" ")[1];
     const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user ={_id: verifyToken.userId};
+    req.user = { _id: verifyToken.userId };
+
     next();
   } catch (error) {
     res.status(500).json({ message: "Invalid or expired token" });
