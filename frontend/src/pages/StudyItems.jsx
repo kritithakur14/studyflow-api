@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { useLocation } from "react-router-dom";
 
 export default function StudyItems() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -27,6 +28,10 @@ export default function StudyItems() {
 
   const [isEditNoteModalOpen, setIsEditNoteModalOpen] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
+
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const deckParam = params.get("deck");
 
   // Fetch decks on page load
   useEffect(() => {
@@ -55,6 +60,16 @@ export default function StudyItems() {
 
     fetchDecks();
   }, []);
+
+  // Auto-select deck from URL
+  useEffect(() => {
+    if (deckParam && decks.length > 0) {
+      const match = decks.find((d) => d._id.toString() === deckParam);
+      if (match) {
+        setSelectedDeck(match);
+      }
+    }
+  }, [deckParam, decks]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -125,11 +140,6 @@ export default function StudyItems() {
         console.log("Error updating flashcard:", data);
         return;
       }
-
-      // // Update UI
-      // const updatedList = selectedDeck.flashcards.map((card) =>
-      //   card._id === editingFlashcard._id ? data.flashcard : card
-      // );
 
       setSelectedDeck({
         ...selectedDeck,
@@ -292,7 +302,9 @@ export default function StudyItems() {
         {/* ------- PAGE CONTENT ------- */}
         <div className="flex-1 p-10 overflow-y-auto">
           {/* ---------- SELECT DECK DROPDOWN ---------- */}
-          <label className="text-lg font-semibold">Select Deck:</label>
+          <label className="text-lg text-[#022a66] font-semibold">
+            Select Deck:
+          </label>
 
           <select
             className="block w-56 md:w-1/3 mt-2 p-2 border border-gray-300 rounded-lg bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#9752e6]"
@@ -300,7 +312,6 @@ export default function StudyItems() {
             onChange={(e) => {
               const deckId = e.target.value;
               const match = decks.find((d) => d._id.toString() === deckId);
-              // console.log("Matched deck:", match);
               setSelectedDeck(match);
             }}
           >
@@ -341,7 +352,7 @@ export default function StudyItems() {
 
                       <div className="flex gap-6 mt-4">
                         <button
-                          className="text-blue-600 font-medium"
+                          className="bg-[#a749e6] text-white font-medium"
                           onClick={() => {
                             setEditingFlashcard(card);
                             setIsEditFlashModalOpen(true);
@@ -350,7 +361,7 @@ export default function StudyItems() {
                           Edit
                         </button>
                         <button
-                          className="text-red-600 font-medium"
+                          className="bg-[#a749e6] text-white font-medium"
                           onClick={() => deleteFlashcard(card._id)}
                         >
                           Delete
@@ -393,7 +404,7 @@ export default function StudyItems() {
 
                       <div className="flex gap-6 mt-4">
                         <button
-                          className="text-blue-600 font-medium"
+                          className="bg-[#a749e6] text-white font-medium"
                           onClick={() => {
                             setEditingNote(note);
                             setIsEditNoteModalOpen(true);
@@ -402,7 +413,7 @@ export default function StudyItems() {
                           Edit
                         </button>
                         <button
-                          className="text-red-600 font-medium"
+                          className="bg-[#a749e6] text-white font-medium"
                           onClick={() => deleteNote(note._id)}
                         >
                           Delete

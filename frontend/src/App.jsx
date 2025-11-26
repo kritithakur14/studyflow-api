@@ -8,6 +8,7 @@ import Users from "./pages/Users";
 import Collaboration from "./pages/Collaboration";
 import StudyItems from "./pages/StudyItems";
 import Settings from "./pages/Settings";
+import Decks from "./pages/Decks";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/deck/:id" element={<DeckDetails />} />
         <Route path="/users" element={<Users />} />
         <Route path="/collaboration" element={<Collaboration />} />
+        <Route path="/decks" element={<Decks />} />
         <Route path="/study-items" element={<StudyItems />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
