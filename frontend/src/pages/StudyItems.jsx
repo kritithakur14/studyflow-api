@@ -331,7 +331,7 @@ export default function StudyItems() {
                 </h2>
 
                 <button
-                  className="bg-purple-600 text-white px-4 py-2 rounded-lg shadow"
+                  className="bg-[#aabadb] text-[#061f44] px-4 py-2 rounded-lg shadow"
                   onClick={() => setIsFlashModalOpen(true)}
                 >
                   + Add Flashcard
@@ -345,14 +345,14 @@ export default function StudyItems() {
                   {selectedDeck.flashcards.map((card) => (
                     <div
                       key={card._id}
-                      className="p-4 border rounded-lg bg-white shadow-sm"
+                      className="p-4 border rounded-lg bg-white shadow-sm text-[#20406e]"
                     >
                       <p className="font-semibold">{card.question}</p>
                       <p className="text-gray-700 mt-1">{card.answer}</p>
 
                       <div className="flex gap-6 mt-4">
                         <button
-                          className="bg-[#a749e6] text-white font-medium"
+                          className="bg-[#4f7b8d] text-[#f7fafa] font-bold"
                           onClick={() => {
                             setEditingFlashcard(card);
                             setIsEditFlashModalOpen(true);
@@ -361,7 +361,7 @@ export default function StudyItems() {
                           Edit
                         </button>
                         <button
-                          className="bg-[#a749e6] text-white font-medium"
+                          className="bg-[#4f7b8d] text-[#f7fafa] font-bold"
                           onClick={() => deleteFlashcard(card._id)}
                         >
                           Delete
@@ -383,7 +383,7 @@ export default function StudyItems() {
                 <h2 className="text-2xl font-semibold text-[#022a66]">Notes</h2>
 
                 <button
-                  className="bg-purple-600 text-white px-4 py-2 rounded-lg shadow"
+                  className="bg-[#aabadb] text-[#061f44]  px-4 py-2 rounded-lg shadow"
                   onClick={() => setIsNoteModalOpen(true)}
                 >
                   + Add Note
@@ -397,14 +397,14 @@ export default function StudyItems() {
                   {selectedDeck.notes.map((note) => (
                     <div
                       key={note._id}
-                      className="p-4 border rounded-lg bg-white shadow-sm"
+                      className="p-4 border rounded-lg bg-white shadow-sm text-[#20406e]"
                     >
                       <p className="font-semibold">{note.title}</p>
                       <p className="text-gray-700 mt-1">{note.content}</p>
 
                       <div className="flex gap-6 mt-4">
                         <button
-                          className="bg-[#a749e6] text-white font-medium"
+                          className="bg-[#4f7b8d] text-[#f7fafa] font-bold"
                           onClick={() => {
                             setEditingNote(note);
                             setIsEditNoteModalOpen(true);
@@ -413,7 +413,7 @@ export default function StudyItems() {
                           Edit
                         </button>
                         <button
-                          className="bg-[#a749e6] text-white font-medium"
+                          className="bg-[#4f7b8d] text-[#f7fafa] font-bold"
                           onClick={() => deleteNote(note._id)}
                         >
                           Delete
@@ -429,13 +429,13 @@ export default function StudyItems() {
       </div>
       {isFlashModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-96 shadow">
-            <h2 className="text-xl font-semibold mb-4">Add Flashcard</h2>
+          <div className="bg-[#f1efef] p-6 rounded-lg w-96 shadow">
+            <h2 className="text-xl font-semibold mb-4 text-[#05214b]">Add Flashcard</h2>
 
             <input
               type="text"
               placeholder="Question"
-              className="w-full border p-2 rounded mb-3"
+              className="w-full border p-2 rounded mb-3  text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
             />
@@ -443,20 +443,20 @@ export default function StudyItems() {
             <input
               type="text"
               placeholder="Answer"
-              className="w-full border p-2 rounded mb-3"
+              className="w-full border p-2 rounded mb-3  text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
             />
 
             <button
               onClick={addFlashcard}
-              className="w-full bg-purple-600 text-white p-2 rounded"
+              className="w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded"
             >
               Add
             </button>
 
             <button
-              className="mt-2 w-full bg-gray-300 p-2 rounded"
+              className="mt-2 w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded"
               onClick={() => setIsFlashModalOpen(false)}
             >
               Cancel
@@ -467,11 +467,11 @@ export default function StudyItems() {
       {/* ------------ FLASHCARD EDIT MODAL ------------ */}
       {isEditFlashModalOpen && editingFlashcard && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-96 shadow">
-            <h2 className="text-xl font-semibold mb-4">Edit Flashcard</h2>
+          <div className="bg-[#dddbdb] p-6 rounded-lg w-96 shadow">
+            <h2 className="text-xl font-semibold mb-4 text-[#061f44]">Edit Flashcard</h2>
 
             <input
-              className="w-full border p-2 rounded mb-3"
+              className="w-full border p-2 rounded mb-3 text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
               value={editingFlashcard.question}
               onChange={(e) =>
                 setEditingFlashcard({
@@ -482,7 +482,7 @@ export default function StudyItems() {
             />
 
             <input
-              className="w-full border p-2 rounded mb-3"
+              className="w-full border p-2 rounded mb-3 text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
               value={editingFlashcard.answer}
               onChange={(e) =>
                 setEditingFlashcard({
@@ -493,14 +493,14 @@ export default function StudyItems() {
             />
 
             <button
-              className="w-full bg-purple-600 text-white p-2 rounded"
+              className="w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded"
               onClick={updateFlashcard}
             >
               Save Changes
             </button>
 
             <button
-              className="w-full bg-gray-300 p-2 rounded mt-2"
+              className="w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded mt-2"
               onClick={() => setIsEditFlashModalOpen(false)}
             >
               Cancel
@@ -511,33 +511,33 @@ export default function StudyItems() {
 
       {isNoteModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-96 shadow">
-            <h2 className="text-xl font-semibold mb-4">Add Note</h2>
+          <div className="bg-[#f1efef] p-6 rounded-lg w-96 shadow">
+            <h2 className="text-xl font-semibold mb-4 text-[#05214b]">Add Note</h2>
 
             <input
               type="text"
               placeholder="Title"
-              className="w-full border p-2 rounded mb-3"
+              className="w-full border p-2 rounded mb-3 text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
               value={noteTitle}
               onChange={(e) => setNoteTitle(e.target.value)}
             />
 
             <textarea
               placeholder="Content"
-              className="w-full border p-2 rounded mb-3 h-32"
+              className="w-full p-2 rounded mb-3 h-32 text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
               value={noteContent}
               onChange={(e) => setNoteContent(e.target.value)}
             ></textarea>
 
             <button
-              className="w-full bg-purple-600 text-white p-2 rounded"
+              className="w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded"
               onClick={addNote}
             >
               Add Note
             </button>
 
             <button
-              className="mt-2 w-full bg-gray-300 p-2 rounded"
+              className="mt-2 w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded"
               onClick={() => setIsNoteModalOpen(false)}
             >
               Cancel
@@ -548,11 +548,11 @@ export default function StudyItems() {
       {/* ------------ NOTE EDIT MODAL ------------ */}
       {isEditNoteModalOpen && editingNote && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-96 shadow">
-            <h2 className="text-xl font-semibold mb-4">Edit Note</h2>
+          <div className="bg-[#dddbdb] p-6 rounded-lg w-96 shadow">
+            <h2 className="text-xl font-semibold mb-4 text-[#05214b]">Edit Note</h2>
 
             <input
-              className="w-full border p-2 rounded mb-3"
+              className="w-full border p-2 rounded mb-3 text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
               value={editingNote.title}
               onChange={(e) =>
                 setEditingNote({
@@ -563,7 +563,7 @@ export default function StudyItems() {
             />
 
             <textarea
-              className="w-full border p-2 rounded mb-3 h-32"
+              className="w-full border p-2 rounded mb-3 h-32 text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
               value={editingNote.content}
               onChange={(e) =>
                 setEditingNote({
@@ -574,14 +574,14 @@ export default function StudyItems() {
             ></textarea>
 
             <button
-              className="w-full bg-purple-600 text-white p-2 rounded"
+              className="w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded"
               onClick={updateNote}
             >
               Save Changes
             </button>
 
             <button
-              className="w-full bg-gray-300 p-2 rounded mt-2"
+              className="w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded mt-2"
               onClick={() => setIsEditNoteModalOpen(false)}
             >
               Cancel

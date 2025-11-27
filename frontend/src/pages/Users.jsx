@@ -33,7 +33,6 @@ export default function Users() {
         });
         console.log("User from localStorage:", user);
 
-
         if (!res.ok) {
           console.log("Fetch users error:".res.status);
           return;
@@ -76,31 +75,33 @@ export default function Users() {
           <input
             type="text"
             placeholder="search users..."
-            className="w-full md:w-1/3 px-3 py-2 border rounded-lg mb-4 outline-none text-gray-700"
+            className="w-full md:w-1/3 px-3 py-2 border rounded-lg mb-4 outline-none text-gray-950 bg-[#ffffff]"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
 
           {/*user table*/}
           <div className="overflow-auto">
-            <table className="w-full border-collapse bg-white shadow-sm rounded-lg">
+            <table className="w-full border-collapse bg-white shadow-sm rounded-lg sm:rounded-xl">
               <thead className="bg-gray-100 text-left">
                 <tr>
-                  <th className="p-3 border">Name</th>
-                  <th className="p-3 border">Email</th>
-                  <th className="p-3 border">Role</th>
-                  <th className="p-3 border">Actions</th>
+                  <th className="p-3 border text-[#022a66]">Name</th>
+                  <th className="p-3 border text-[#022a66]">Email</th>
+                  <th className="p-3 border text-[#022a66]">Role</th>
+                  <th className="p-3 border text-[#022a66]">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredUsers.map((u) => (
                   <tr key={u._id} className="hover:bg-gray-50">
-                    <td className="p-3 border">{u.username}</td>
-                    <td className="p-3 border">{u.email}</td>
-                    <td className="p-3 border">{u.role || "user"}</td>
-                    <td className="p-3 border">
+                    <td className="p-3 border text-[#4e3939]">{u.username}</td>
+                    <td className="p-3 border text-[#4e3939]">{u.email}</td>
+                    <td className="p-3 border text-[#4e3939]">
+                      {u.role || "user"}
+                    </td>
+                    <td className="p-3 border text-[#4e3939]">
                       <button
-                        className="text-[white] hover:underline mr-3 bg-[#795ca8]"
+                        className="text-[#37378a] hover:bg-[#bcbcda] mr-3 bg-[#a0a9bb]"
                         onClick={() => {
                           setSelectedUser(u);
                           setShowView(true);
@@ -109,7 +110,7 @@ export default function Users() {
                         View
                       </button>
                       <button
-                        className="text-[white] hover:underline mr-3 bg-[#795ca8]"
+                        className="text-[#37378a] hover:bg-[#bcbcda] mr-3 bg-[#a0a9bb]"
                         onClick={() => {
                           setSelectedUser(u);
                           setShowDelete(true);
@@ -173,7 +174,7 @@ export default function Users() {
                   </button>
 
                   <button
-                    className="px-4 py-2 bg-red-500 text-white rounded"
+                    className="px-4 py-2 bg-[#c9528d] text-white rounded"
                     onClick={async () => {
                       try {
                         const token = localStorage.getItem("token");
@@ -211,6 +212,5 @@ export default function Users() {
         </div>
       </div>
     </div>
-
   );
 }

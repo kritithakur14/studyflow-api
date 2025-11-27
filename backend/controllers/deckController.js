@@ -1,4 +1,5 @@
 import Deck from "../models/Deck.js";
+import User from "../models/User.js";
 
 //create a new deck
 export const createDeck = async (req, res) => {
@@ -41,6 +42,10 @@ export const getAllDecks = async (req, res) => {
       .populate({
         path: "notes",
         select: "title content",
+      })
+      .populate({
+        path: "collaborators.user",
+        select: "username email",
       })
       .sort({ createdAt: -1 });
     res.status(200).json({
@@ -162,8 +167,8 @@ export const deleteDeck = async (req, res) => {
 //add collaborator to deck
 export const addCollaborator = async (req, res) => {
   try {
-    const { userId, role } = req.body;
     const deckId = req.params.id;
+    const { identifier, role } = req.body; //identifier can be email or username
 
     const deck = await Deck.findById(deckId);
     if (!deck) {
@@ -176,27 +181,68 @@ export const addCollaborator = async (req, res) => {
         .status(403)
         .json({ message: "Only the owner can add collaborators" });
     }
+
+    //find user by email or username
+    const user = await User.findOne({
+      $or: [{ username: identifier }, { email: identifier }],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     //check if the user is already a collaborator
     const existingCollaborator = deck.collaborators.find(
-      (collab) => collab.user.toString() === userId
+      (collab) => collab.user.toString() === user._id.toString()
     );
 
     //update role if collaborator exists
     if (existingCollaborator) {
-      existingCollaborator.role = role; //update role
-      await deck.save();
-      return res
-        .status(200)
-        .json({ message: "Collaborator added successfully" });
+      return res.status(200).json({ message: "User already a collaborator" });
     }
-    deck.collaborators.push({ user: userId, role });
+
+    deck.collaborators.push({ user: user._id, role: role || "viewer" });
     await deck.save();
 
-    res.status(200).json({ message: "Collaborator added successfully" });
+    res.status(200).json({ message: "Collaborator added successfully", deck });
   } catch (error) {
     return res
       .status(500)
       .json({ message: `addCollaborator: ${error.message}` });
+  }
+};
+
+export const updateCollaboratorRole = async (req, res) => {
+  try {
+    const { id, userId } = req.params;
+    const { role } = req.body;
+
+    const deck = await Deck.findById(id);
+    if (!deck) {
+      return res.status(404).json({ message: "Deck not found" });
+    }
+
+    if (deck.user.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Only the owner can update roles" });
+    }
+    const collab = deck.collaborators.find(
+      (collab) => collab.user.toString === userId
+    );
+
+    if (!collab) {
+      return res.status(404).json({ message: "Collaborator not found" });
+    }
+
+    collab.role = role;
+    await deck.save();
+
+    return res.status(200).json({ message: "Role updated successfully", deck });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: `updateCollaboratorRole: ${error.message}` });
   }
 };
 
@@ -238,16 +284,16 @@ export const getPendingCollaborations = async (req, res) => {
     const userId = req.userId; // from isAuth
 
     const decks = await Deck.find({
-      "collaborators.user": userId, 
-      user: { $ne: userId } // exclude own decks
+      "collaborators.user": userId,
+      user: { $ne: userId }, // exclude own decks
     })
-    .populate("user", "username email")
-    .populate("collaborators.user", "username email");
+      .populate("user", "username email")
+      .populate("collaborators.user", "username email");
 
     res.status(200).json({
       message: "Pending collaborations fetched",
       count: decks.length,
-      decks
+      decks,
     });
   } catch (error) {
     res.status(500).json({
@@ -255,4 +301,3 @@ export const getPendingCollaborations = async (req, res) => {
     });
   }
 };
-

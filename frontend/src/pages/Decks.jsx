@@ -145,8 +145,8 @@ export default function Decks() {
 
         <div className=" p-6">
           <button
-            className="bg-[#a749e6] text-white px-4 py-2 rounded-lg shadow
-          "
+            className="bg-[#aabadb] text-[#061f44] px-4 py-2 rounded-lg shadow
+          hover:bg-[#b4b4c0]"
             onClick={() => setShowModal(true)}
           >
             + New Deck
@@ -154,35 +154,35 @@ export default function Decks() {
         </div>
         {showModal && (
           <div className="fixed inset-0 bg-[#dbc6c6] bg-opacity-40 flex justify-center items-center z-50">
-            <div className="bg-[#b061fa] p-6 rounded-lg w-96 shadow">
-              <h2 className="text-xl font-semibold mb-4 text-white">
+            <div className="bg-[#a5a4e2] p-6 rounded-lg w-96 shadow">
+              <h2 className="text-xl font-semibold mb-4 text-[#061f44]">
                 Create New Deck
               </h2>
 
               <input
                 type="text"
                 placeholder="Add title"
-                className="w-full border p-2 rounded mb-3 text-[#b40580] bg-[#fcf6f8]"
+                className="w-full border p-2 rounded mb-3 text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
                 value={newDeckTitle}
                 onChange={(e) => setNewDeckTitle(e.target.value)}
               />
               <input
                 type="text"
                 placeholder="Add description"
-                className="w-full border p-2 rounded mb-3 text-[#b40580] bg-[#fcf6f8]"
+                className="w-full border p-2 rounded mb-3 text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
                 value={newDeckDescription}
                 onChange={(e) => setNewDeckDescription(e.target.value)}
               />
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 bg-[#fcf6f8] text-[#b40580] rounded"
+                  className="px-4 py-2 bg-[#fcf6f8] text-[#061f44] rounded"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleCreateDeck}
-                  className="px-4 py-2 bg-[#fcf6f8] text-[#b40580] rounded"
+                  className="px-4 py-2 bg-[#fcf6f8] text-[#061f44] rounded"
                 >
                   Create
                 </button>
@@ -191,26 +191,28 @@ export default function Decks() {
           </div>
         )}
         {/*card grid */}
-        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 px-6  py-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 px-6 py-4">
           {decks.map((deck) => (
             <div
               key={deck._id}
-              className="break-inside-avoid border p-4 rounded-xl shadow bg-white hover:shadow-md transition mb-6 px-4"
+              className="border p-4 rounded-xl shadow bg-white hover:shadow-md 
+  transition flex flex-col justify-between min-h-[180px]"
             >
-              <h2 className="text-sm font-sans text-[#d4203e] font-bold mb-1">
+              <h2 className="text-sm font-sans text-[#0f1763] font-bold mb-1">
                 {deck.title}
               </h2>
-              <h2 className="text-sm font-sans text-[#f0405d] font-semibold mb-1">
+              <h2 className="text-sm font-sans text-[#3e458b] font-semibold mb-1">
                 {deck.description}
               </h2>
 
               <p className="text-gray-600 mb-4 mt-2">
-                {deck.flashcards?.length || 0} flashcards
+                {deck.flashcards?.length || 0} flashcards,{" "}
+                {deck.collaborators?.length || 0} collaborators
               </p>
 
               <div className="flex gap-3 mt-3">
                 <button
-                  className="px-3 py-1 bg-gray-200 rounded-lg"
+                  className="px-3 py-1 bg-gray-200 rounded-lg text-[#022a66]"
                   onClick={() => {
                     setEditDeckId(deck._id);
                     setEditTitle(deck.title);
@@ -221,16 +223,23 @@ export default function Decks() {
                   Edit
                 </button>
                 <button
-                  className="px-3 py-1 bg-gray-200 rounded-lg"
+                  className="px-3 py-1 bg-gray-200 rounded-lg text-[#022a66]"
                   onClick={() => handleDelete(deck._id)}
                 >
                   Delete
                 </button>
                 <button
-                  className="px-3 py-1 bg-gray-200 rounded-lg"
+                  className="px-3 py-1 bg-gray-200 rounded-lg text-[#022a66]"
                   onClick={() => navigate(`/study-items?deck=${deck._id}`)}
                 >
                   Explore
+                </button>
+
+                <button
+                  className="px-3 py-1 bg-gray-200 rounded-lg text-[#022a66]"
+                  onClick={() => navigate(`/collaboration?deck=${deck._id}`)}
+                >
+                  Collaborate
                 </button>
               </div>
             </div>
@@ -239,35 +248,35 @@ export default function Decks() {
       </div>
       {editModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded w-96 shadow">
-            <h2 className="text-xl font-semibold mb-4">Edit Deck</h2>
+          <div className="bg-[#a5a4e2] p-6 rounded-lg w-96 shadow">
+            <h2 className="text-xl font-semibold mb-4 text-[#061f44]">Edit Deck</h2>
 
             <input
               type="text"
-              className="w-full border p-2 rounded mb-3"
+              className="w-full border p-2 rounded mb-3 bg-[#fcf6f8] text-[#061f44] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
             />
             <input
               type="text"
-              className="w-full border p-2 rounded mb-3"
+              className="w-full border p-2 rounded mb-3 bg-[#fcf6f8] text-[#061f44] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
               value={editDescription}
               onChange={(e) => setEditDescription(e.target.value)}
             />
 
             <div className="flex justify-end gap-3">
               <button
-                className="px-4 py-2 bg-purple-600 text-white rounded"
+                className="px-4 py-2 bg-[#fcf6f8] text-[#061f44] rounded"
                 onClick={() => setEditModal(false)}
               >
                 Cancel
               </button>
 
               <button
-                className="px-4 py-2 bg-purple-600 text-white rounded"
+                className="px-4 py-2 bg-[#fcf6f8] text-[#061f44] rounded"
                 onClick={handleUpdateDeck}
               >
-                Save
+                Create
               </button>
             </div>
           </div>

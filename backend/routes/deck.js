@@ -5,6 +5,7 @@ import {
   addCollaborator,
   getPendingCollaborations,
   removeCollaborator,
+  updateCollaboratorRole,
 } from "../controllers/deckController.js";
 import {
   createDeck,
@@ -26,6 +27,13 @@ deckRouter.delete("/:id", isAuth, canEditDeck, deleteDeck);
 
 //add collaborator to deck
 deckRouter.post("/:id/collaborators", isAuth, canEditDeck, addCollaborator);
+
+deckRouter.put(
+  "/:id/collaborators/:userId",
+  isAuth,
+  canEditDeck,
+  updateCollaboratorRole
+);
 
 //remove collaborator from deck
 deckRouter.delete(

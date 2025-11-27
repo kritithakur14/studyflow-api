@@ -155,7 +155,7 @@ export default function Dashboard() {
               <h3 className="text-lg font-semibold text-[#022a66]">
                 Total Users
               </h3>
-              <p className="text-3xl font-bold text-[#6a1b9a] mt-2">
+              <p className="text-3xl font-bold text-[#426ea0] mt-2">
                 {totalUsers}
               </p>
             </div>
@@ -165,7 +165,7 @@ export default function Dashboard() {
               <h3 className="text-lg font-semibold text-[#022a66]">
                 Study Items
               </h3>
-              <p className="text-3xl font-bold text-[#6a1b9a] mt-2">
+              <p className="text-3xl font-bold text-[#426ea0] mt-2">
                 {(totalDecks || 0) + (totalNotes || 0) + (totalFlashcards || 0)}
               </p>
             </div>
@@ -175,14 +175,14 @@ export default function Dashboard() {
               <h3 className="text-lg font-semibold text-[#022a66]">
                 Pending Collaborations
               </h3>
-              <p className="text-3xl font-bold text-[#6a1b9a] mt-2">
+              <p className="text-3xl font-bold text-[#426ea0] mt-2">
                 {pendingCollabs}
               </p>
             </div>
           </div>
           {/* RECENT ACTIVITY */}
           <div className="mt-10 bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-xl font-semibold text-[#6a1b9a] mb-4 mt-4">
+            <h3 className="text-xl font-semibold text-[#022a66] mb-4 mt-4">
               Recent Activity
             </h3>
 
