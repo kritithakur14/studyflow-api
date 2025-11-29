@@ -19,19 +19,6 @@ const deckSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    collaborators: [
-      {
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-        role: {
-          type: String,
-          enum: ["viewer", "editor"],
-          default: "viewer",
-        },
-      },
-    ],
     createdAt: {
       type: Date,
       default: Date.now,

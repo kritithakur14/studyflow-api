@@ -1,6 +1,5 @@
 import express from "express";
 import isAuth from "../middleware/isAuth.js";
-import { canViewDeck, canEditDeck } from "../middleware/deckPermissions.js";
 
 import {
   createFlashcard,
@@ -16,11 +15,11 @@ const flashcardRouter = express.Router();
 flashcardRouter.post("/:deckId", isAuth, createFlashcard);
 
 flashcardRouter.get("/flashcard/:id", isAuth, getFlashcardsById);
-flashcardRouter.put("/flashcard/:id", isAuth, canEditDeck, updateFlashcard);
-flashcardRouter.delete("/flashcard/:id", isAuth, canEditDeck, deleteFlashcard);
+flashcardRouter.put("/flashcard/:id", isAuth, updateFlashcard);
+flashcardRouter.delete("/flashcard/:id", isAuth, deleteFlashcard);
 flashcardRouter.get("/count/all", isAuth, getFlashcardCount);
 
 flashcardRouter.get("/", isAuth, getAllFlashcards);
-flashcardRouter.get("/:deckId", isAuth, canViewDeck, getAllFlashcards);
+flashcardRouter.get("/:deckId", isAuth, getAllFlashcards);
 
 export default flashcardRouter;

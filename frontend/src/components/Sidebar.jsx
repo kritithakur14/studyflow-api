@@ -39,17 +39,6 @@ function Sidebar({ isOpen, handleLogout }) {
         >
           Users
         </NavLink>
-
-        <NavLink
-          to="/collaboration"
-          className={({ isActive }) =>
-            `px-4 py-2 rounded-lg  text-[#022a66] cursor-pointer transition ${
-              isActive ? "bg-[#c3c3ec]" : "hover:bg-[#c3c3ec]"
-            }`
-          }
-        >
-          Collaboration
-        </NavLink>
         <NavLink
           to="/decks"
           className={({ isActive }) =>

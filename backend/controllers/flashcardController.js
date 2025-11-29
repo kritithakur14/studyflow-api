@@ -52,7 +52,7 @@ export const getAllFlashcards = async (req, res) => {
     if (!deck) {
       return res.status(404).json({ message: "Deck not found" });
     }
-    if (deck.user.toString() !== req.userId) {
+    if (deck.user.toString() !== req.userId.toString()) {
       return res
         .status(403)
         .json({ message: "Unauthorized access to this deck" });
@@ -83,7 +83,7 @@ export const getFlashcardsById = async (req, res) => {
     if (!flashcard) {
       return res.status(404).json({ message: "Flashcards not found" });
     }
-    if (flashcard.user.toString() !== req.userId) {
+    if (flashcard.user.toString() !== req.userId.toString()) {
       return res
         .status(403)
         .json({ message: "Unauthorized access to this flashcard" });
@@ -103,7 +103,7 @@ export const updateFlashcard = async (req, res) => {
     if (!flashcard) {
       return res.status(404).json({ message: "Flashcard not found" });
     }
-    if (flashcard.user.toString() !== req.userId) {
+    if (flashcard.user.toString() !== req.userId.toString()) {
       return res
         .status(403)
         .json({ message: "Unauthorized access to this flashcard" });
@@ -132,7 +132,7 @@ export const deleteFlashcard = async (req, res) => {
     if (!flashcard) {
       return res.status(404).json({ message: "Flashcard not found" });
     }
-    if (flashcard.user.toString() !== req.userId) {
+    if (flashcard.user.toString() !== req.userId.toString()) {
       return res
         .status(403)
         .json({ message: "Unauthorized access to this flashcard" });

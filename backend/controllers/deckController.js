@@ -43,10 +43,6 @@ export const getAllDecks = async (req, res) => {
         path: "notes",
         select: "title content",
       })
-      .populate({
-        path: "collaborators.user",
-        select: "username email",
-      })
       .sort({ createdAt: -1 });
     res.status(200).json({
       message: "Decks fetched successfullly",
@@ -70,34 +66,20 @@ export const getDeckById = async (req, res) => {
       .populate({
         path: "notes",
         select: "title content",
-      })
-      .populate({
-        path: "collaborators.user",
-        select: "username email",
       });
 
     if (!deck) {
       return res.status(404).json({ message: "Deck not found" });
     }
 
-    const userId = req.user._id.toString();
-
-    //owner can view
-    if (deck.user.toString() === userId) {
-      return res.status(200).json(deck);
+    // owner only
+    if (deck.user.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Unauthorized access to this deck" });
     }
 
-    //collaborators can view
-    const isCollaborator = deck.collaborators.some(
-      (collab) => collab.user._id.toString() === userId
-    );
-    if (isCollaborator) {
-      return res.status(200).json(deck);
-    }
-    //else unauthorized
-    return res
-      .status(403)
-      .json({ message: "unauthorized access to this deck" });
+    res.status(200).json(deck);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: `getDeckById: ${error.message}` });
@@ -108,25 +90,16 @@ export const getDeckById = async (req, res) => {
 export const updateDeck = async (req, res) => {
   try {
     const deck = await Deck.findById(req.params.id);
+
     if (!deck) {
       return res.status(404).json({ message: "Deck not found" });
     }
-    const userId = req.user._id.toString();
-
-    //if user is not the owner
-    if (deck.user.toString() !== userId) {
-      //check if collaborator has edit rights
-      const collaborator = deck.collaborators.find(
-        (collab) => collab.user.toString() === userId
-      );
-      //if not a collaborator or has view-only rights
-      if (!collaborator || collaborator.role !== "editor") {
-        return res
-          .status(403)
-          .json({ message: "You do not have permission to edit this deck" });
-      }
+     // only owner can update
+    if (deck.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: "You do not have permission to edit this deck",
+      });
     }
-
     //allowed to update
     const { title, description, tags } = req.body;
 
@@ -135,6 +108,7 @@ export const updateDeck = async (req, res) => {
     if (tags !== undefined) deck.tags = tags;
 
     const updatedDeck = await deck.save();
+    
     res
       .status(200)
       .json({ message: "Deck updated successfully", deck: updatedDeck });
@@ -161,143 +135,5 @@ export const deleteDeck = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: `deleteDeck: ${error.message}` });
-  }
-};
-
-//add collaborator to deck
-export const addCollaborator = async (req, res) => {
-  try {
-    const deckId = req.params.id;
-    const { identifier, role } = req.body; //identifier can be email or username
-
-    const deck = await Deck.findById(deckId);
-    if (!deck) {
-      return res.status(404).json({ message: "Deck not found" });
-    }
-
-    //check if the user is the owner
-    if (deck.user.toString() !== req.user._id.toString()) {
-      return res
-        .status(403)
-        .json({ message: "Only the owner can add collaborators" });
-    }
-
-    //find user by email or username
-    const user = await User.findOne({
-      $or: [{ username: identifier }, { email: identifier }],
-    });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    //check if the user is already a collaborator
-    const existingCollaborator = deck.collaborators.find(
-      (collab) => collab.user.toString() === user._id.toString()
-    );
-
-    //update role if collaborator exists
-    if (existingCollaborator) {
-      return res.status(200).json({ message: "User already a collaborator" });
-    }
-
-    deck.collaborators.push({ user: user._id, role: role || "viewer" });
-    await deck.save();
-
-    res.status(200).json({ message: "Collaborator added successfully", deck });
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ message: `addCollaborator: ${error.message}` });
-  }
-};
-
-export const updateCollaboratorRole = async (req, res) => {
-  try {
-    const { id, userId } = req.params;
-    const { role } = req.body;
-
-    const deck = await Deck.findById(id);
-    if (!deck) {
-      return res.status(404).json({ message: "Deck not found" });
-    }
-
-    if (deck.user.toString() !== req.user._id.toString()) {
-      return res
-        .status(403)
-        .json({ message: "Only the owner can update roles" });
-    }
-    const collab = deck.collaborators.find(
-      (collab) => collab.user.toString === userId
-    );
-
-    if (!collab) {
-      return res.status(404).json({ message: "Collaborator not found" });
-    }
-
-    collab.role = role;
-    await deck.save();
-
-    return res.status(200).json({ message: "Role updated successfully", deck });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: `updateCollaboratorRole: ${error.message}` });
-  }
-};
-
-export const removeCollaborator = async (req, res) => {
-  try {
-    const deckId = req.params.id;
-    const userIdToRemove = req.params.userId;
-
-    const deck = await Deck.findById(deckId);
-    if (!deck) {
-      return res.status(404).json({ message: "Deck not found" });
-    }
-
-    //check if the user is the owner
-    if (deck.user.toString() !== req.user._id.toString()) {
-      return res
-        .status(403)
-        .json({ message: "Only the owner can remove collaborators" });
-    }
-
-    //remove collaborator
-    deck.collaborators = deck.collaborators.filter(
-      (collab) => collab.user.toString() !== userIdToRemove
-    );
-
-    await deck.save();
-    return res
-      .status(200)
-      .json({ message: "Collaborator removed successfully" });
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ message: `removeCollaborator: ${error.message}` });
-  }
-};
-
-export const getPendingCollaborations = async (req, res) => {
-  try {
-    const userId = req.userId; // from isAuth
-
-    const decks = await Deck.find({
-      "collaborators.user": userId,
-      user: { $ne: userId }, // exclude own decks
-    })
-      .populate("user", "username email")
-      .populate("collaborators.user", "username email");
-
-    res.status(200).json({
-      message: "Pending collaborations fetched",
-      count: decks.length,
-      decks,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: `getPendingCollaborations: ${error.message}`,
-    });
   }
 };

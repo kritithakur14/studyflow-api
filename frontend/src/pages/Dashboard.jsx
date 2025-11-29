@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
-
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
@@ -11,7 +10,6 @@ export default function Dashboard() {
   const [totalDecks, setTotalDecks] = useState(0);
   const [totalNotes, setTotalNotes] = useState(0);
   const [totalFlashcards, setTotalFlashcards] = useState(0);
-  const [pendingCollabs, setPendingCollabs] = useState(0);
 
   //Auth Check for user
   useEffect(() => {
@@ -94,32 +92,6 @@ export default function Dashboard() {
     fetchFlashcards();
   }, []);
 
-  
-
-  //pendind collabs
-  useEffect(() => {
-    const fetchPending = async () => {
-      try {
-        const res = await fetch(
-          "http://localhost:8000/api/decks/pending/all",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-
-        const data = await res.json();
-        setPendingCollabs(Array.isArray(data) ? data.length : 0);
-
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchPending();
-  }, []);
-
   //Read user
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -137,8 +109,11 @@ export default function Dashboard() {
       />
 
       <div className="flex-1 flex flex-col">
-        <Navbar username={user?.username} setIsSidebarOpen={setIsSidebarOpen} 
-        title="Dashboard Overview"/>
+        <Navbar
+          username={user?.username}
+          setIsSidebarOpen={setIsSidebarOpen}
+          title="Dashboard Overview"
+        />
 
         {isSidebarOpen && (
           <div
@@ -167,16 +142,6 @@ export default function Dashboard() {
               </h3>
               <p className="text-3xl font-bold text-[#426ea0] mt-2">
                 {(totalDecks || 0) + (totalNotes || 0) + (totalFlashcards || 0)}
-              </p>
-            </div>
-
-            {/* COLLABORATION CARD */}
-            <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-              <h3 className="text-lg font-semibold text-[#022a66]">
-                Pending Collaborations
-              </h3>
-              <p className="text-3xl font-bold text-[#426ea0] mt-2">
-                {pendingCollabs}
               </p>
             </div>
           </div>

@@ -70,7 +70,7 @@ export const getNoteById = async (req, res) => {
     if (!note) {
       return res.status(404).json({ message: "Note not found" });
     }
-    if (note.user.toString() !== req.userId) {
+    if (note.user.toString() !== req.userId.toString()) {
       return res
         .status(403)
         .json({ message: "Unauthorised access to this note" });
@@ -90,7 +90,7 @@ export const updateNote = async (req, res) => {
     if (!note) {
       return res.status(404).json({ message: "Note not found" });
     }
-    if (note.user.toString() !== req.userId) {
+    if (note.user.toString() !== req.userId.toString()) {
       return res
         .status(403)
         .json({ message: "Unauthorised access to this note" });
@@ -120,7 +120,7 @@ export const deleteNote = async (req, res) => {
     if (!note) {
       return res.status(404).json({ message: "Note not found" });
     }
-    if (note.user.toString() !== req.userId) {
+    if (note.user.toString() !== req.userId.toString()) {
       return res
         .status(403)
         .json({ message: "Unauthorised access to this note" });

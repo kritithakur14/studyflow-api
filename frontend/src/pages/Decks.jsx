@@ -235,12 +235,6 @@ export default function Decks() {
                   Explore
                 </button>
 
-                <button
-                  className="px-3 py-1 bg-gray-200 rounded-lg text-[#022a66]"
-                  onClick={() => navigate(`/collaboration?deck=${deck._id}`)}
-                >
-                  Collaborate
-                </button>
               </div>
             </div>
           ))}
