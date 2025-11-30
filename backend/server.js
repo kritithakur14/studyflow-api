@@ -13,13 +13,25 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 
 const app = express();
+// app.use(
+//   cors({
+//     origin: "*",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:5173",
+      "http://192.168.100.12:5173",
+      "https://4248521e0bad.ngrok-free.app"
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 app.use(express.json());
 

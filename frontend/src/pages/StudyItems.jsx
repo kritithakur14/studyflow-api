@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useLocation } from "react-router-dom";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function StudyItems() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -14,23 +15,28 @@ export default function StudyItems() {
   const [selectedDeck, setSelectedDeck] = useState(null);
 
   // Flashcard modal states
-  const [isFlashModalOpen, setIsFlashModalOpen] = useState(false);
+  const [isFlashViewModal, setIsFlashViewModal] = useState(false);
+  const [isFlashEditModal, setIsFlashEditModal] = useState(false);
+  const [flashcardTemp, setFlashcardTemp] = useState(null);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
 
-  const [isEditFlashModalOpen, setIsEditFlashModalOpen] = useState(false);
-  const [editingFlashcard, setEditingFlashcard] = useState(null);
-
   // Note modal states
-  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+  const [isNoteModal, setIsNoteModal] = useState(false);
+  const [isNoteEditModal, setIsNoteEditModal] = useState(false);
+  const [noteTemp, setNoteTemp] = useState(null);
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
 
-  const [isEditNoteModalOpen, setIsEditNoteModalOpen] = useState(false);
-  const [editingNote, setEditingNote] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteType, setDeleteType] = useState(""); //flashcard, note
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
+
+  const shorten = (txt, max = 80) =>
+    txt?.length > max ? txt.slice(0, max) + "..." : txt;
   const deckParam = params.get("deck");
 
   // Fetch decks on page load
@@ -38,7 +44,7 @@ export default function StudyItems() {
     const fetchDecks = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:8000/api/decks", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/decks`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -47,7 +53,9 @@ export default function StudyItems() {
         const data = await res.json();
 
         // Set only array of decks
-        setDecks(Array.isArray(data.decks) ? data.decks : []);
+        // setDecks(Array.isArray(data.decks) ? data.decks : []);
+        const list = Array.isArray(data) ? data : data.decks;
+        setDecks(list || []);
 
         if (data.decks.length > 0) {
           setSelectedDeck(data.decks[0]);
@@ -82,7 +90,7 @@ export default function StudyItems() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:8000/api/flashcards/${selectedDeck._id}`,
+        `${import.meta.env.VITE_API_URL}/api/flashcards/${selectedDeck._id}`,
         {
           method: "POST",
           headers: {
@@ -107,9 +115,9 @@ export default function StudyItems() {
       });
 
       // Reset + close
+      setIsFlashEditModal(false);
       setQuestion("");
       setAnswer("");
-      setIsFlashModalOpen(false);
     } catch (error) {
       console.log(error);
     }
@@ -120,7 +128,9 @@ export default function StudyItems() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:8000/api/flashcards/flashcard/${editingFlashcard._id}`,
+        `${import.meta.env.VITE_API_URL}/api/flashcards/flashcard/${
+          flashcardTemp._id
+        }`,
         {
           method: "PUT",
           headers: {
@@ -128,8 +138,8 @@ export default function StudyItems() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            question: editingFlashcard.question,
-            answer: editingFlashcard.answer,
+            question: flashcardTemp.question,
+            answer: flashcardTemp.answer,
           }),
         }
       );
@@ -144,37 +154,12 @@ export default function StudyItems() {
       setSelectedDeck({
         ...selectedDeck,
         flashcards: selectedDeck.flashcards.map((c) =>
-          c._id === editingFlashcard._id ? data.flashcard : c
+          c._id === flashcardTemp._id ? data.flashcard : c
         ),
       });
 
-      setIsEditFlashModalOpen(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const deleteFlashcard = async (id) => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(
-        `http://localhost:8000/api/flashcards/flashcard/${id}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!res.ok) {
-        console.log("Delete flashcard failed");
-        return;
-      }
-
-      setSelectedDeck({
-        ...selectedDeck,
-        flashcards: selectedDeck.flashcards.filter((c) => c._id !== id),
-      });
+      setIsFlashEditModal(false);
+      setFlashcardTemp(null);
     } catch (error) {
       console.log(error);
     }
@@ -185,7 +170,7 @@ export default function StudyItems() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:8000/api/notes/${selectedDeck._id}`,
+        `${import.meta.env.VITE_API_URL}/api/notes/${selectedDeck._id}`,
         {
           method: "POST",
           headers: {
@@ -215,7 +200,7 @@ export default function StudyItems() {
       // reset form
       setNoteTitle("");
       setNoteContent("");
-      setIsNoteModalOpen(false);
+      setIsNoteModal(false);
     } catch (error) {
       console.log(error);
     }
@@ -226,7 +211,7 @@ export default function StudyItems() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:8000/api/notes/${editingNote._id}`,
+        `${import.meta.env.VITE_API_URL}/api/notes/${noteTemp._id}`,
         {
           method: "PUT",
           headers: {
@@ -234,8 +219,8 @@ export default function StudyItems() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            title: editingNote.title,
-            content: editingNote.content,
+            title: noteTemp.title,
+            content: noteTemp.content,
           }),
         }
       );
@@ -247,33 +232,62 @@ export default function StudyItems() {
       setSelectedDeck({
         ...selectedDeck,
         notes: selectedDeck.notes.map((n) =>
-          n._id === editingNote._id ? data.note : n
+          n._id === noteTemp._id ? data.note : n
         ),
       });
 
-      setIsEditNoteModalOpen(false);
+      setIsNoteEditModal(false);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const deleteNote = async (id) => {
+  const handleConfirmDelete = async () => {
+    const token = localStorage.getItem("token");
+
     try {
-      const token = localStorage.getItem("token");
+      if (deleteType === "flashcard") {
+        const res = await fetch(
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/flashcards/flashcard/${deleteTarget}`,
+          {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-      const res = await fetch(`http://localhost:8000/api/notes/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+        if (res.ok) {
+          setSelectedDeck({
+            ...selectedDeck,
+            flashcards: selectedDeck.flashcards.filter(
+              (c) => c._id !== deleteTarget
+            ),
+          });
+        }
+      }
 
-      if (!res.ok) return console.log("Delete note failed");
+      if (deleteType === "note") {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/notes/${deleteTarget}`,
+          {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-      setSelectedDeck({
-        ...selectedDeck,
-        notes: selectedDeck.notes.filter((n) => n._id !== id),
-      });
-    } catch (error) {
-      console.log(error);
+        if (res.ok) {
+          setSelectedDeck({
+            ...selectedDeck,
+            notes: selectedDeck.notes.filter((n) => n._id !== deleteTarget),
+          });
+        }
+      }
+
+      setConfirmOpen(false);
+      setDeleteTarget(null);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -332,7 +346,11 @@ export default function StudyItems() {
 
                 <button
                   className="bg-[#aabadb] text-[#061f44] px-4 py-2 rounded-lg shadow"
-                  onClick={() => setIsFlashModalOpen(true)}
+                  onClick={() => {
+                    setQuestion("");
+                    setAnswer("");
+                    setIsFlashEditModal(true);
+                  }}
                 >
                   + Add Flashcard
                 </button>
@@ -341,28 +359,48 @@ export default function StudyItems() {
               {/* SAFE CHECK FOR FLASHCARDS */}
               {Array.isArray(selectedDeck.flashcards) &&
               selectedDeck.flashcards.length > 0 ? (
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {selectedDeck.flashcards.map((card) => (
                     <div
                       key={card._id}
-                      className="p-4 border rounded-lg bg-white shadow-sm text-[#20406e]"
+                      className="p-4 border rounded-lg bg-white shadow-sm text-[#20406e] break-words"
                     >
-                      <p className="font-semibold">{card.question}</p>
-                      <p className="text-gray-700 mt-1">{card.answer}</p>
+                      <p className="font-semibold break-all whitespace-normal">
+                        {shorten(card.question, 60)}
+                      </p>
+                      <p className="text-gray-700 mt-1 break-all whitespace-normal">
+                        {shorten(card.answer, 80)}
+                      </p>
 
-                      <div className="flex gap-6 mt-4">
+                      <div className="flex gap-4 mt-3">
                         <button
                           className="bg-[#4f7b8d] text-[#f7fafa] font-bold"
                           onClick={() => {
-                            setEditingFlashcard(card);
-                            setIsEditFlashModalOpen(true);
+                            setFlashcardTemp(card);
+                            setIsFlashViewModal(true);
+                          }}
+                        >
+                          View Full
+                        </button>
+
+                        <button
+                          className="bg-[#4f7b8d] text-[#f7fafa] font-bold"
+                          onClick={() => {
+                            setFlashcardTemp(card);
+                            true;
+                            setIsFlashEditModal(true);
                           }}
                         >
                           Edit
                         </button>
+
                         <button
                           className="bg-[#4f7b8d] text-[#f7fafa] font-bold"
-                          onClick={() => deleteFlashcard(card._id)}
+                          onClick={() => {
+                            setDeleteTarget(card._id);
+                            setDeleteType("flashcard");
+                            setConfirmOpen(true);
+                          }}
                         >
                           Delete
                         </button>
@@ -384,37 +422,49 @@ export default function StudyItems() {
 
                 <button
                   className="bg-[#aabadb] text-[#061f44]  px-4 py-2 rounded-lg shadow"
-                  onClick={() => setIsNoteModalOpen(true)}
+                  onClick={() => {
+                    setNoteTitle("");
+                    setNoteContent("");
+                    setIsNoteModal(true);
+                  }}
                 >
                   + Add Note
                 </button>
               </div>
 
-              {selectedDeck.notes?.length === 0 ? (
+              {selectedDeck?.notes?.length === 0 ? (
                 <p className="text-gray-500">No notes yet.</p>
               ) : (
                 <div className="space-y-4">
                   {selectedDeck.notes.map((note) => (
                     <div
                       key={note._id}
-                      className="p-4 border rounded-lg bg-white shadow-sm text-[#20406e]"
+                      className="p-4 border rounded-lg bg-white shadow-sm text-[#20406e] break-words"
                     >
-                      <p className="font-semibold">{note.title}</p>
-                      <p className="text-gray-700 mt-1">{note.content}</p>
+                      <p className="font-semibold break-all whitespace-normal">
+                        {note.title}
+                      </p>
+                      <p className="text-gray-700 mt-1 break-all whitespace-normal">
+                        {note.content}
+                      </p>
 
                       <div className="flex gap-6 mt-4">
                         <button
                           className="bg-[#4f7b8d] text-[#f7fafa] font-bold"
                           onClick={() => {
-                            setEditingNote(note);
-                            setIsEditNoteModalOpen(true);
+                            setNoteTemp(note);
+                            setIsNoteEditModal(true);
                           }}
                         >
                           Edit
                         </button>
                         <button
                           className="bg-[#4f7b8d] text-[#f7fafa] font-bold"
-                          onClick={() => deleteNote(note._id)}
+                          onClick={() => {
+                            setDeleteTarget(note._id);
+                            setDeleteType("note");
+                            setConfirmOpen(true);
+                          }}
                         >
                           Delete
                         </button>
@@ -427,81 +477,80 @@ export default function StudyItems() {
           )}
         </div>
       </div>
-      {isFlashModalOpen && (
+      {/* ---------------- VIEW FLASHCARD MODAL ---------------- */}
+      {isFlashViewModal && flashcardTemp && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-[#f1efef] p-6 rounded-lg w-96 shadow">
-            <h2 className="text-xl font-semibold mb-4 text-[#05214b]">Add Flashcard</h2>
+          <div className="bg-white p-6 rounded-lg w-96 shadow">
+            <h2 className="text-xl font-semibold mb-4 text-[#05214b]">
+              Flashcard Details
+            </h2>
 
-            <input
-              type="text"
-              placeholder="Question"
-              className="w-full border p-2 rounded mb-3  text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-            />
+            <p className="font-semibold mb-2">Question:</p>
+            <p className="p-2 border rounded bg-gray-100 whitespace-pre-wrap">
+              {flashcardTemp.question}
+            </p>
 
-            <input
-              type="text"
-              placeholder="Answer"
-              className="w-full border p-2 rounded mb-3  text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-            />
+            <p className="font-semibold mt-4 mb-2">Answer:</p>
+            <p className="p-2 border rounded bg-gray-100 whitespace-pre-wrap">
+              {flashcardTemp.answer}
+            </p>
 
             <button
-              onClick={addFlashcard}
-              className="w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded"
+              className="mt-4 w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded"
+              onClick={() => setIsFlashViewModal(false)}
             >
-              Add
-            </button>
-
-            <button
-              className="mt-2 w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded"
-              onClick={() => setIsFlashModalOpen(false)}
-            >
-              Cancel
+              Close
             </button>
           </div>
         </div>
       )}
       {/* ------------ FLASHCARD EDIT MODAL ------------ */}
-      {isEditFlashModalOpen && editingFlashcard && (
+      {isFlashEditModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-[#dddbdb] p-6 rounded-lg w-96 shadow">
-            <h2 className="text-xl font-semibold mb-4 text-[#061f44]">Edit Flashcard</h2>
+            <h2 className="text-xl font-semibold mb-4 text-[#061f44]">
+              {flashcardTemp ? "Edit Flashcard" : "Add Flashcard"}
+            </h2>
 
             <input
               className="w-full border p-2 rounded mb-3 text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
-              value={editingFlashcard.question}
+              value={flashcardTemp ? flashcardTemp.question : question}
               onChange={(e) =>
-                setEditingFlashcard({
-                  ...editingFlashcard,
-                  question: e.target.value,
-                })
+                flashcardTemp
+                  ? setFlashcardTemp({
+                      ...flashcardTemp,
+                      question: e.target.value,
+                    })
+                  : setQuestion(e.target.value)
               }
             />
 
             <input
               className="w-full border p-2 rounded mb-3 text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
-              value={editingFlashcard.answer}
+              value={flashcardTemp?.answer || answer}
               onChange={(e) =>
-                setEditingFlashcard({
-                  ...editingFlashcard,
-                  answer: e.target.value,
-                })
+                flashcardTemp
+                  ? setFlashcardTemp({
+                      ...flashcardTemp,
+                      answer: e.target.value,
+                    })
+                  : setAnswer(e.target.value)
               }
             />
 
             <button
               className="w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded"
-              onClick={updateFlashcard}
+              onClick={flashcardTemp ? updateFlashcard : addFlashcard}
             >
-              Save Changes
+              {flashcardTemp ? "Save Changes" : "Add Flashcard"}
             </button>
 
             <button
               className="w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded mt-2"
-              onClick={() => setIsEditFlashModalOpen(false)}
+              onClick={() => {
+                setIsFlashEditModal(false);
+                setFlashcardTemp(null);
+              }}
             >
               Cancel
             </button>
@@ -509,10 +558,12 @@ export default function StudyItems() {
         </div>
       )}
 
-      {isNoteModalOpen && (
+      {isNoteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-[#f1efef] p-6 rounded-lg w-96 shadow">
-            <h2 className="text-xl font-semibold mb-4 text-[#05214b]">Add Note</h2>
+            <h2 className="text-xl font-semibold mb-4 text-[#05214b]">
+              Add Note
+            </h2>
 
             <input
               type="text"
@@ -538,7 +589,7 @@ export default function StudyItems() {
 
             <button
               className="mt-2 w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded"
-              onClick={() => setIsNoteModalOpen(false)}
+              onClick={() => setIsNoteModal(false)}
             >
               Cancel
             </button>
@@ -546,30 +597,26 @@ export default function StudyItems() {
         </div>
       )}
       {/* ------------ NOTE EDIT MODAL ------------ */}
-      {isEditNoteModalOpen && editingNote && (
+      {isNoteEditModal && noteTemp && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-[#dddbdb] p-6 rounded-lg w-96 shadow">
-            <h2 className="text-xl font-semibold mb-4 text-[#05214b]">Edit Note</h2>
+            <h2 className="text-xl font-semibold mb-4 text-[#05214b]">
+              Edit Note
+            </h2>
 
             <input
               className="w-full border p-2 rounded mb-3 text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
-              value={editingNote.title}
+              value={noteTemp.title}
               onChange={(e) =>
-                setEditingNote({
-                  ...editingNote,
-                  title: e.target.value,
-                })
+                setNoteTemp({ ...noteTemp, title: e.target.value })
               }
             />
 
             <textarea
               className="w-full border p-2 rounded mb-3 h-32 text-[#061f44] bg-[#fcf6f8] focus:outline-none focus:ring-2 focus:ring-[#657b99]"
-              value={editingNote.content}
+              value={noteTemp.content}
               onChange={(e) =>
-                setEditingNote({
-                  ...editingNote,
-                  content: e.target.value,
-                })
+                setNoteTemp({ ...noteTemp, content: e.target.value })
               }
             ></textarea>
 
@@ -582,13 +629,23 @@ export default function StudyItems() {
 
             <button
               className="w-full bg-[#9a9ad3] text-[#02164d] p-2 rounded mt-2"
-              onClick={() => setIsEditNoteModalOpen(false)}
+              onClick={() => setIsNoteEditModal(false)}
             >
               Cancel
             </button>
           </div>
         </div>
       )}
+      <ConfirmModal
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+        message={
+          deleteType === "flashcard"
+            ? "Are you sure you want to delete this flashcard?"
+            : "Are you sure you want to delete this note?"
+        }
+      />
     </div>
   );
 }

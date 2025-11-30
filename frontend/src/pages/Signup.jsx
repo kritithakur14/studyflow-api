@@ -1,14 +1,13 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AuthDataContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 
 function Signup() {
   let navigate = useNavigate();
-  let { serverUrl } = useContext(AuthDataContext);
+  // let { serverUrl } = useContext(AuthDataContext);
 
   let [show, setShow] = useState(false);
   let [username, setUsername] = useState("");
@@ -16,25 +15,53 @@ function Signup() {
   let [password, setPassword] = useState("");
   let [loading, setLoading] = useState(false);
 
+  // const handleSignUp = async (e) => {
+  //   try {
+  //     e.preventDefault();
+  //     let result = await axios.post(serverUrl + "/api/auth/signup", {
+  //       username,
+  //       email,
+  //       password,
+  //     });
+  //     navigate("/login");
+  //     toast.success("Account created successfully! Please login.");
+  //     console.log(result.data);
+  //   } catch (error) {
+  //     console.log("Signup error:", error);
+  //     toast.error(
+  //       error.response?.data?.message || "Signup failed. Please try again."
+  //     );
+  //   }
+  //   setLoading(false);
+  // };
+
   const handleSignUp = async (e) => {
-    try {
-      e.preventDefault();
-      let result = await axios.post(serverUrl + "/api/auth/signup", {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/auth/signup`,
+      {
         username,
         email,
         password,
-      });
-      navigate("/login");
-      toast.success("Account created successfully! Please login.");
-      console.log(result.data);
-    } catch (error) {
-      console.log("Signup error:", error);
-      toast.error(
-        error.response?.data?.message || "Signup failed. Please try again."
-      );
-    }
+      }
+    );
+
+    toast.success("Account created successfully! Please login.");
+    navigate("/login");
+    console.log(res.data)
+  } catch (error) {
+    console.log("Signup error:", error);
+    toast.error(
+      error.response?.data?.message || "Signup failed. Please try again."
+    );
+  } finally {
     setLoading(false);
-  };
+  }
+};
+
 
   return (
     <div className="w-screen h-screen flex">

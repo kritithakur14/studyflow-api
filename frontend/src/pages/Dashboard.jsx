@@ -11,6 +11,9 @@ export default function Dashboard() {
   const [totalNotes, setTotalNotes] = useState(0);
   const [totalFlashcards, setTotalFlashcards] = useState(0);
 
+  // alert("Calling: " + `${import.meta.env.VITE_API_URL}/api/decks`);
+  // alert("Token: " + localStorage.getItem("token"));
+
   //Auth Check for user
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -23,7 +26,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/users", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -41,7 +44,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchDecks = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/decks", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/decks`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -59,7 +62,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/notes", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/notes`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         const data = await res.json();
@@ -76,7 +79,7 @@ export default function Dashboard() {
     const fetchFlashcards = async () => {
       try {
         const res = await fetch(
-          "http://localhost:8000/api/flashcards/count/all",
+          `${import.meta.env.VITE_API_URL}/api/flashcards/count/all`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

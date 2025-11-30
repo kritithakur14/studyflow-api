@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function Decks() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -16,6 +17,9 @@ export default function Decks() {
 
   const [showModal, setShowModal] = useState(false);
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
 
@@ -28,7 +32,7 @@ export default function Decks() {
   const handleCreateDeck = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8000/api/decks", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/decks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,10 +54,11 @@ export default function Decks() {
       console.log("Error creating deck:", error);
     }
   };
+
   const fetchDecks = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8000/api/decks", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/decks`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -77,17 +82,20 @@ export default function Decks() {
   const handleUpdateDeck = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:8000/api/decks/${editDeckId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          title: editTitle,
-          description: editDescription,
-        }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/decks/${editDeckId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: editTitle,
+            description: editDescription,
+          }),
+        }
+      );
 
       const data = await res.json();
       console.log("Deck updated:", data);
@@ -99,23 +107,24 @@ export default function Decks() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this deck?")) {
-      return;
-    }
+  const handleDelete = async () => {
+   
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`http://localhost:8000/api/decks/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/decks/${deleteId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (!res.ok) {
-        console.log("Delete flashcard failed");
+        console.log("Delete deck failed");
         return;
       }
-
+      setConfirmOpen(false);
       fetchDecks();
     } catch (error) {
       console.log(error);
@@ -207,7 +216,7 @@ export default function Decks() {
 
               <p className="text-gray-600 mb-4 mt-2">
                 {deck.flashcards?.length || 0} flashcards,{" "}
-                {deck.collaborators?.length || 0} collaborators
+                {deck.notes?.length || 0} notes
               </p>
 
               <div className="flex gap-3 mt-3">
@@ -224,7 +233,10 @@ export default function Decks() {
                 </button>
                 <button
                   className="px-3 py-1 bg-gray-200 rounded-lg text-[#022a66]"
-                  onClick={() => handleDelete(deck._id)}
+                  onClick={() => {
+                    setDeleteId(deck._id);
+                    setConfirmOpen(true);
+                  }}
                 >
                   Delete
                 </button>
@@ -234,7 +246,6 @@ export default function Decks() {
                 >
                   Explore
                 </button>
-
               </div>
             </div>
           ))}
@@ -243,7 +254,9 @@ export default function Decks() {
       {editModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-[#a5a4e2] p-6 rounded-lg w-96 shadow">
-            <h2 className="text-xl font-semibold mb-4 text-[#061f44]">Edit Deck</h2>
+            <h2 className="text-xl font-semibold mb-4 text-[#061f44]">
+              Edit Deck
+            </h2>
 
             <input
               type="text"
@@ -276,6 +289,12 @@ export default function Decks() {
           </div>
         </div>
       )}
+      <ConfirmModal
+      open={confirmOpen}
+      onClose={()=> setConfirmOpen(false)}
+      onConfirm={handleDelete}
+      message="Are you sure you want to delete this deck?"
+      />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 
+
 export default function Users() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function Users() {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:8000/api/users", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -45,6 +46,8 @@ export default function Users() {
     };
     fetchUsers();
   }, []);
+
+ 
 
   //filter users based on search input
   const filteredUsers = users.filter((u) =>

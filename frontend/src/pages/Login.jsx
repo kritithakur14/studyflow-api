@@ -1,36 +1,67 @@
-import React, { useState, useContext } from "react";
-import axios from "axios";
+import React, { useState } from "react";
+// import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AuthDataContext } from "../context/AuthContext";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 
 function Login() {
   let navigate = useNavigate();
-  let { serverUrl } = useContext(AuthDataContext);
+  // let { serverUrl } = useContext(AuthDataContext);
 
   let [show, setShow] = useState(false);
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
 
-  const handleLogin = async (e) => {
-    try {
-      e.preventDefault();
-      let result = await axios.post(serverUrl + "/api/auth/login", {
-        email,
-        password,
-      });
-      localStorage.setItem("token", result.data.token);
-      localStorage.setItem("user", JSON.stringify(result.data.user));
+  // const handleLogin = async (e) => {
+  //       e.preventDefault();
+  //   try {
+  //     let result = await axios.post(serverUrl + "/api/auth/login", {
+  //       email,
+  //       password,
+  //     });
+  //     localStorage.setItem("token", result.data.token);
+  //     localStorage.setItem("user", JSON.stringify(result.data.user));
 
-      navigate("/dashboard");
-      toast.success("Logged In successfully!");
-    } catch (error) {
-      console.log("Login error:", error);
-      toast.error("Login failed. Invalid credentials!");
+  //     navigate("/dashboard");
+  //     toast.success("Logged In successfully!");
+  //   } catch (error) {
+  //     console.log("Login error:", error);
+  //     toast.error("Login failed. Invalid credentials!");
+  //   }
+  // };
+
+  const handleLogin = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json",
+         "Authorization": "Bearer " + localStorage.getItem("token"),
+       },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Login failed");
+      return;
     }
-  };
+
+    // VERY IMPORTANT FOR PHONE
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    // FORCE NAVIGATE (mobile safe)
+    window.location.href = "/dashboard";
+
+  } catch (err) {
+    alert("Error: " + err.message);
+  }
+};
+
 
   return (
     <div className="w-screen h-screen flex">
