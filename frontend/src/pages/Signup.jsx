@@ -15,25 +15,6 @@ function Signup() {
   let [password, setPassword] = useState("");
   let [loading, setLoading] = useState(false);
 
-  // const handleSignUp = async (e) => {
-  //   try {
-  //     e.preventDefault();
-  //     let result = await axios.post(serverUrl + "/api/auth/signup", {
-  //       username,
-  //       email,
-  //       password,
-  //     });
-  //     navigate("/login");
-  //     toast.success("Account created successfully! Please login.");
-  //     console.log(result.data);
-  //   } catch (error) {
-  //     console.log("Signup error:", error);
-  //     toast.error(
-  //       error.response?.data?.message || "Signup failed. Please try again."
-  //     );
-  //   }
-  //   setLoading(false);
-  // };
 
   const handleSignUp = async (e) => {
   e.preventDefault();

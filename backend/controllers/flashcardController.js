@@ -8,9 +8,7 @@ export const createFlashcard = async (req, res) => {
     const { deckId } = req.params;
 
     if (!question || !answer) {
-      return res
-        .status(400)
-        .json({ message: "Question, Answer are required" });
+      return res.status(400).json({ message: "Question, Answer are required" });
     }
     //find deck
     const deck = await Deck.findById(deckId);
@@ -29,10 +27,6 @@ export const createFlashcard = async (req, res) => {
       user: req.userId,
     });
     await newFlashcard.save();
-
-    // //adding flashcard to deck's flashcards array
-    // deck.flashcards.push(newFlashcard._id);
-    // await deck.save();
 
     res.status(201).json({
       message: "Flashcard created successfully",
@@ -124,6 +118,7 @@ export const updateFlashcard = async (req, res) => {
     res.status(500).json({ message: `updateFlashcard: ${error.message}` });
   }
 };
+
 //delete flashcard
 export const deleteFlashcard = async (req, res) => {
   try {

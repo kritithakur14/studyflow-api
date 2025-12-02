@@ -51,9 +51,6 @@ export default function StudyItems() {
         });
 
         const data = await res.json();
-
-        // Set only array of decks
-        // setDecks(Array.isArray(data.decks) ? data.decks : []);
         const list = Array.isArray(data) ? data : data.decks;
         setDecks(list || []);
 
@@ -114,7 +111,6 @@ export default function StudyItems() {
         flashcards: [...selectedDeck.flashcards, data.flashcard],
       });
 
-      // Reset + close
       setIsFlashEditModal(false);
       setQuestion("");
       setAnswer("");
@@ -313,9 +309,9 @@ export default function StudyItems() {
           ></div>
         )}
 
-        {/* ------- PAGE CONTENT ------- */}
+        {/*  PAGE CONTENT  */}
         <div className="flex-1 p-10 overflow-y-auto">
-          {/* ---------- SELECT DECK DROPDOWN ---------- */}
+          {/* SELECT DECK DROPDOWN  */}
           <label className="text-lg text-[#022a66] font-semibold">
             Select Deck:
           </label>
@@ -336,7 +332,7 @@ export default function StudyItems() {
             ))}
           </select>
 
-          {/* ---------- FLASHCARDS SECTION ---------- */}
+          {/* FLASHCARDS SECTION  */}
           {selectedDeck ? (
             <div className="mt-10">
               <div className="flex items-center justify-between mb-3">
@@ -356,7 +352,6 @@ export default function StudyItems() {
                 </button>
               </div>
 
-              {/* SAFE CHECK FOR FLASHCARDS */}
               {Array.isArray(selectedDeck.flashcards) &&
               selectedDeck.flashcards.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -414,7 +409,7 @@ export default function StudyItems() {
             </div>
           ) : null}
 
-          {/* ---------- NOTES SECTION ---------- */}
+          {/* NOTES SECTION */}
           {selectedDeck && (
             <div className="mt-12">
               <div className="flex items-center justify-between mb-3">
@@ -477,7 +472,7 @@ export default function StudyItems() {
           )}
         </div>
       </div>
-      {/* ---------------- VIEW FLASHCARD MODAL ---------------- */}
+      {/*  VIEW FLASHCARD MODAL */}
       {isFlashViewModal && flashcardTemp && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg w-96 shadow">
@@ -504,7 +499,7 @@ export default function StudyItems() {
           </div>
         </div>
       )}
-      {/* ------------ FLASHCARD EDIT MODAL ------------ */}
+      {/*  FLASHCARD EDIT MODAL  */}
       {isFlashEditModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-[#dddbdb] p-6 rounded-lg w-96 shadow">
@@ -596,7 +591,7 @@ export default function StudyItems() {
           </div>
         </div>
       )}
-      {/* ------------ NOTE EDIT MODAL ------------ */}
+      {/*  NOTE EDIT MODAL  */}
       {isNoteEditModal && noteTemp && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-[#dddbdb] p-6 rounded-lg w-96 shadow">

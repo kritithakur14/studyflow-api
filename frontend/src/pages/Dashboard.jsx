@@ -6,13 +6,14 @@ import Navbar from "../components/Navbar";
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
+
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalDecks, setTotalDecks] = useState(0);
   const [totalNotes, setTotalNotes] = useState(0);
   const [totalFlashcards, setTotalFlashcards] = useState(0);
-
-  // alert("Calling: " + `${import.meta.env.VITE_API_URL}/api/decks`);
-  // alert("Token: " + localStorage.getItem("token"));
+  const [totalStudyItems, setTotalStudyItems] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [quote, setQuote] = useState("");
 
   //Auth Check for user
   useEffect(() => {
@@ -23,63 +24,69 @@ export default function Dashboard() {
   }, [navigate]);
 
   //total users
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const data = await res.json();
-        setTotalUsers(data.length);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchUsers();
-  }, []);
+  // useEffect(() => {
+  //   const fetchUsers = async () => {
+  //     try {
+  //       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //         },
+  //       });
+  //       const data = await res.json();
+  //       setTotalUsers(data.length);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   fetchUsers();
+  // }, []);
 
-  //total decks
   useEffect(() => {
-    const fetchDecks = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/decks`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const data = await res.json();
-        setTotalDecks(data.length);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchDecks();
-  }, []);
-
-  // total notes
-  useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/notes`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        const data = await res.json();
-        setTotalNotes(data.length);
-      } catch (err) {
-        console.log("Notes fetch error:", err);
-      }
-    };
-    fetchNotes();
-  }, []);
-
-  // total flashcards
-  useEffect(() => {
-    const fetchFlashcards = async () => {
+    const fetchStats = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/flashcards/count/all`,
+          `${import.meta.env.VITE_API_URL}/api/stats/overview`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        const data = await res.json();
+
+        setTotalDecks(Number(data.totalDecks) || 0);
+        setTotalNotes(Number(data.totalNotes) || 0);
+        setTotalFlashcards(Number(data.totalFlashcards) || 0);
+        setTotalStudyItems(Number(data.totalStudyItems) || 0);
+      } catch (err) {
+        console.log("Stats fetch error:", err);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  const quotes = [
+    "Self belief and hard work will always earn you success.",
+    "Start before you are ready. Progress beats perfection",
+    "Small progress is still progress.",
+    "You're doing better than you think.",
+    "Consistency creates confidence.",
+    "One small step today leads to big success tomorrow.",
+    "You only fail if you stop trying.",
+    "The best time to start was yesterday. The next best is now.",
+  ];
+
+  useEffect(() => {
+    // Random motivational quote
+    setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+
+    // Fetch activity streak
+    const fetchStreak = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/activity`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -87,12 +94,13 @@ export default function Dashboard() {
           }
         );
         const data = await res.json();
-        setTotalFlashcards(data.totalFlashcards || 0);
+        setStreak(data.streak || 0);
       } catch (err) {
-        console.log("Flashcards count error:", err);
+        console.log("Activity fetch error:", err);
       }
     };
-    fetchFlashcards();
+
+    fetchStreak();
   }, []);
 
   //Read user
@@ -125,41 +133,46 @@ export default function Dashboard() {
           ></div>
         )}
 
-        <div className="p-4 sm:p-6">
+        <div className="flex flex-col items-center gap-6 mt-6">
           {/* CARDS ROW */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            {/* USERS CARD */}
-            <div className="bg-white rounded-lg shadow-sm p-6 text-center">
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6"> */}
+          {/* USERS CARD */}
+          {/* <div className="bg-white rounded-lg shadow-sm p-6 text-center">
               <h3 className="text-lg font-semibold text-[#022a66]">
                 Total Users
               </h3>
               <p className="text-3xl font-bold text-[#426ea0] mt-2">
                 {totalUsers}
               </p>
-            </div>
+            </div> */}
 
-            {/* STUDY ITEMS CARD */}
-            <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-              <h3 className="text-lg font-semibold text-[#022a66]">
-                Study Items
-              </h3>
-              <p className="text-3xl font-bold text-[#426ea0] mt-2">
-                {(totalDecks || 0) + (totalNotes || 0) + (totalFlashcards || 0)}
-              </p>
-            </div>
-          </div>
-          {/* RECENT ACTIVITY */}
-          <div className="mt-10 bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-xl font-semibold text-[#022a66] mb-4 mt-4">
-              Recent Activity
+          {/* STUDY ITEMS CARD */}
+
+          <div className="bg-white rounded-lg shadow-sm p-6 text-center mt-6">
+            <h3 className="text-lg font-semibold text-[#022a66]">
+              Study Items
             </h3>
-
-            <ul className="text-[#022a66] space-y-2">
-              <li className="text-gray-500 italic">
-                No recent activity yet...
-              </li>
-            </ul>
+            <p className="text-3xl font-bold text-[#426ea0] mt-2">
+              {totalStudyItems}
+            </p>
           </div>
+        </div>
+        {/* STUDY STREAK */}
+        <div className="bg-white rounded-lg shadow-sm p-6 text-center mt-6">
+          <h3 className="text-lg font-semibold text-[#022a66]">Study Streak</h3>
+          <p className="text-2xl font-bold text-[#426ea0] mt-2">
+            {streak > 0
+              ? `${streak} day${streak > 1 ? "s" : ""} 🔥`
+              : "No streak yet"}
+          </p>
+        </div>
+
+        {/* MOTIVATIONAL QUOTE */}
+        <div className="bg-white rounded-lg shadow-sm p-6 text-center mt-6">
+          <h3 className="text-lg font-semibold text-[#022a66] mb-2">
+            Today's Motivation
+          </h3>
+          <p className="text-md text-[#426ea0] italic">“{quote}”</p>
         </div>
       </div>
     </div>

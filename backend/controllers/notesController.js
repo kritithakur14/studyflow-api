@@ -9,7 +9,7 @@ export const createNote = async (req, res) => {
     if (!title || !content || !deckId) {
       return res
         .status(400)
-        .json({ message: "Title, Content and decId are required" });
+        .json({ message: "Title, Content and deckId are required" });
     }
     const note = new Notes({
       title,

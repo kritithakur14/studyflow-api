@@ -7,6 +7,9 @@ import deckRouter from "./routes/deck.js";
 import flashcardRouter from "./routes/flashcard.js";
 import noteRouter from "./routes/note.js";
 import cors from "cors";
+import statsRouter from "./routes/stats.js";
+import activityRouter from "./routes/activity.js";
+
 
 dotenv.config();
 
@@ -22,16 +25,11 @@ const app = express();
 // );
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://192.168.100.12:5173",
-      "https://4248521e0bad.ngrok-free.app"
-    ],
+    origin: ["http://localhost:5173", "http://192.168.100.12:5173"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
 
 app.use(express.json());
 
@@ -40,6 +38,8 @@ app.use("/api/users", userRouter);
 app.use("/api/decks", deckRouter);
 app.use("/api/flashcards", flashcardRouter);
 app.use("/api/notes", noteRouter);
+app.use("/api/stats", statsRouter);
+app.use("/api/activity", activityRouter);
 
 connectDB()
   .then(() => {

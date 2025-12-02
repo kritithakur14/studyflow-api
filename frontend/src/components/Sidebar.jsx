@@ -29,7 +29,7 @@ function Sidebar({ isOpen, handleLogout }) {
           Dashboard
         </NavLink>
 
-        <NavLink
+        {/* <NavLink
           to="/users"
           className={({ isActive }) =>
             `px-4 py-2 rounded-lg cursor-pointer transition text-[#022a66] ${
@@ -38,7 +38,7 @@ function Sidebar({ isOpen, handleLogout }) {
           }
         >
           Users
-        </NavLink>
+        </NavLink> */}
         <NavLink
           to="/decks"
           className={({ isActive }) =>

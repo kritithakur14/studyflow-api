@@ -66,7 +66,6 @@ export const login = async (req, res) => {
         username: user.username,
         email: user.email,
       },
-      token,
     });
   } catch (error) {
     console.log(error);

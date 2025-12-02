@@ -14,18 +14,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    deck: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Deck",
-      },
-    ],
-    notes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Note",
-      },
-    ],
+
     createdAt: {
       type: Date,
       default: Date.now,
