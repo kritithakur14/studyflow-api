@@ -5,7 +5,7 @@
 
 # Frontend (React App)
 
-The frontend of StudyFlow API is a clean and minimal React-based interface where users can manage their **decks**, **flashcards**, and **study items** easily.
+The frontend of StudyFlow is a clean and minimal React-based interface where users can manage their **decks**, **flashcards**, and **study items** easily.
 
 - **Frontend Features**
 
