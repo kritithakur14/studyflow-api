@@ -1,39 +1,88 @@
-# StudyFlow API
+# StudyFlow
 
-StudyFlow API is a backend project built to help users organize their learning material better.
+ StudyFlow is a full-stack study management system where users can organize their learning using **decks**, **flashcards**, and **notes**, powered by a Node.js backend and a React-based frontend.
+
+
+# Frontend (React App)
+
+The frontend of StudyFlow API is a clean and minimal React-based interface where users can manage their **decks**, **flashcards**, and **study items** easily.
+
+- **Frontend Features**
+
+  - Login and Signup UI
+  - Fully authenticated interface (JWT stored in localStorage)
+  - Dashboard overview showing:
+    - Total **study items**
+    - Daily **Study Streak**
+    - A **Motivation Quote** of the day
+  - Deck management UI (create, edit, delete)
+  - Study Items interface for detailed concepts
+  - Responsive and minimal UI design
+  - Complete integration with backend API
+
+---
+
+## How to Run Frontend Locally
+
+
+1. Go to the frontend folder:
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file:
+   ```env
+   VITE_API_URL=http://localhost:8000
+   ```
+
+4. Run the app:
+   ```bash
+   npm run dev
+   ```
+
+
+---
+
+
+# Backend
+
+StudyFlow is a backend service built to help users organize their learning material better.
 It allows users to create **decks**, add **flashcards** for quick revision, and write **notes** for deeper concepts — all in one place.
 
 ---
 
 ## Features
 
-- **User Authentication & Authorization**
+- **User Authentication**
 
-  - JWT based login system.
-  - Role-based access control for decks.
+  - JWT-based authentication
+  - Only authenticated users can access dashboard, decks, flashcards, and notes
+  - Each user can access **only their own data**
 
 - **Deck Management**
 
-  - Create, update, delete decks.
-  - Make decks **public** and **private**.
-
-- **Collaboration**
-
-  - Add collaborators to a deck (viewer / editor roles).
-  - Remove collaborators.
-  - Public decks are viewable by anyone.
+  - Create new decks
+  - Edit deck title/description
+  - Delete decks
+  - Each deck contains **flashcards** and **notes**
+  - (No public/private or role-based system **yet**)
 
 - **Flashcards & Notes**
 
-  - Add flashcards to each deck.
-  - Add notes linked to decks.
-  - View all decks with flashcards and notes (using Mongoose virtual populate).
-  - Secure access — users can only view or modify their own data.
+  - Add flashcards to each deck
+  - Add notes linked to a deck
+  - View all decks with flashcards and notes (using Mongoose virtual populate)
+  - Secure access — users can only view or modify their own data
 
 - **Secure Data Access**
 
   - Deck visibility and editing is checked through middleware to make sure only
-    allowed users can access or modify each deck.
+    allowed users can access or modify each deck
 
 ---
 
@@ -43,7 +92,8 @@ It allows users to create **decks**, add **flashcards** for quick revision, and 
 - Express.js
 - MongoDB with Mongoose
 - JSON Web Tokens (JWT) for authentication
-- Custom Authorization Middleware (RBAC)
+- dotenv for environment variables
+- Github Actions CI/CD pipeline
 
 ---
 
@@ -52,7 +102,8 @@ It allows users to create **decks**, add **flashcards** for quick revision, and 
 1. **Clone this repository**
 
    ```bash
-   git clone https://github.com/kritithakur14/studyflow-api.git
+    git clone https://github.com/kritithakur14/StudyFlow.git
+
 
    ```
 
@@ -84,9 +135,11 @@ It allows users to create **decks**, add **flashcards** for quick revision, and 
 
 ## Future Enhancements
 
-- Add pagination and search to improve browsing and filtering of decks.
-- Integrate a CI/CD pipeline for automated testing and deployment.
-- Build a React-based dashboard for managing decks, flashcards and collaborators.
+- Add Collaboration (viewers/editors)
+- Add Public/Private deck modes
+- Add Role-based access control
+- Add Admin dashboard
+- Improve performance and caching
 
 ---
 
